@@ -2,8 +2,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { Ambiente } from "./config/ambiente";
 import authRoutes from "./routes/auth";
+import appRoutes from "./routes/app";
 import { AuthController } from "./controllers/AuthController";
-import { authMiddleware } from "./middleware/auth";
 
 const app = new Hono<{ Bindings: Ambiente }>();
 
@@ -20,9 +20,8 @@ app.onError((err, c) => {
 app.get("/", AuthController.page);
 app.route("/api/autenticacao", authRoutes);
 
-// Rotas Protegidas (Exemplo)
-// app.use("/api/app/*", authMiddleware);
-// app.get("/api/app/me", (c) => c.json(c.get('usuario')));
+// Rotas Protegidas (App)
+app.route("/app", appRoutes);
 
 // Rota Seed (Dev)
 app.get("/seed", async (c) => {
