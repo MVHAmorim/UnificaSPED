@@ -1,0 +1,19 @@
+{
+  "name": "app-spedito",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251128.0",
+    "@types/node": "^24.10.1",
+    "typescript": "^5.0.4",
+    "wrangler": "^3.57.2"
+  },
+  "dependencies": {
+    "aws4fetch": "^1.0.18"
+  }
+}

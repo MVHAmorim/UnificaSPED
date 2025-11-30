@@ -1,0 +1,20 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "app-spedito",
+    "main": "src/index.ts",
+    "compatibility_date": "2024-05-29",
+    "kv_namespaces": [
+        {
+            "binding": "UsuariosSpedito",
+            "id": "4c4daed91e8e4f6080571e620e684da8"
+        },
+        {
+            "binding": "SessoesSpedito",
+            "id": "81c108dea2974286b8b9ac276cd0fce9"
+        }
+    ],
+    "vars": {
+        "AWS_REGION": "us-east-1",
+        "SES_FROM_EMAIL": "no-reply@spedito.com.br"
+    }
+}
