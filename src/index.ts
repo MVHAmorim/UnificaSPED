@@ -1,62 +1,39 @@
+import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { Ambiente } from "./config/ambiente";
-import { ControladorAutenticacao } from "./controladores/controladorAutenticacao";
+import authRoutes from "./routes/auth";
+import { AuthController } from "./controllers/AuthController";
+import { authMiddleware } from "./middleware/auth";
 
-export default {
-    async fetch(requisicao: Request, env: Ambiente, ctx: ExecutionContext): Promise<Response> {
-        const url = new URL(requisicao.url);
+const app = new Hono<{ Bindings: Ambiente }>();
 
-        // Headers CORS
-        const headersCors = {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        };
+// Middleware Global
+app.use("*", cors());
 
-        if (requisicao.method === "OPTIONS") {
-            return new Response(null, { headers: headersCors });
-        }
+// Error Handling Global
+app.onError((err, c) => {
+    console.error(err);
+    return c.json({ erro: err.message }, 500);
+});
 
-        try {
-            // Rotas da API
-            if (url.pathname === '/api/autenticacao/login') {
-                const resposta = await ControladorAutenticacao.lidarLogin(requisicao, env, url.origin);
-                return adicionarCors(resposta, headersCors);
-            }
+// Rotas Públicas
+app.get("/", AuthController.page);
+app.route("/api/autenticacao", authRoutes);
 
-            if (url.pathname === '/api/autenticacao/verificar') {
-                const resposta = await ControladorAutenticacao.lidarVerificacao(url, env);
-                return adicionarCors(resposta, headersCors);
-            }
+// Rotas Protegidas (Exemplo)
+// app.use("/api/app/*", authMiddleware);
+// app.get("/api/app/me", (c) => c.json(c.get('usuario')));
 
-            if (url.pathname === '/seed') {
-                // Rota para criar usuário de teste
-                const usuarioTeste = {
-                    nome: "Usuário Teste",
-                    vencimento: "2025-12-31",
-                    features: ["all"]
-                };
-                const email = url.searchParams.get("email") || "teste@spedito.com.br";
-                await env.UsuariosSpedito.put(email, JSON.stringify(usuarioTeste));
-                return new Response(`Usuário ${email} criado!`, { headers: headersCors });
-            }
+// Rota Seed (Dev)
+app.get("/seed", async (c) => {
+    const email = c.req.query("email") || "teste@spedito.com.br";
+    const usuarioTeste = {
+        nome: "Usuário Teste",
+        vencimento: "2025-12-31",
+        features: ["all"]
+    };
+    await c.env.UsuariosSpedito.put(email, JSON.stringify(usuarioTeste));
+    return c.text(`Usuário ${email} criado!`);
+});
 
-            // Padrão: Servir HTML de Login
-            return await ControladorAutenticacao.lidarPaginaLogin();
-
-        } catch (e) {
-            return new Response(JSON.stringify({ erro: (e as Error).message }), { status: 500, headers: headersCors });
-        }
-    },
-} satisfies ExportedHandler<Ambiente>;
-
-function adicionarCors(resposta: Response, cors: Record<string, string>): Response {
-    const novosHeaders = new Headers(resposta.headers);
-    for (const [chave, valor] of Object.entries(cors)) {
-        novosHeaders.set(chave, valor);
-    }
-    return new Response(resposta.body, {
-        status: resposta.status,
-        statusText: resposta.statusText,
-        headers: novosHeaders
-    });
-}
+export default app;

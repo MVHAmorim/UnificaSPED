@@ -103,31 +103,28 @@ export const TEMPLATE_LOGIN_HTML = `
         async function iniciar() {
             const paramsUrl = new URLSearchParams(window.location.search);
             const token = paramsUrl.get('token');
-            const tokenArmazenado = localStorage.getItem('token_autenticacao');
 
             if (token) {
                 // Verificar token da URL
                 await verificarToken(token);
-            } else if (tokenArmazenado) {
-                // Verificar token armazenado
-                await verificarToken(tokenArmazenado);
             } else {
+                // Tentar verificar sessão (Cookie)
+                // Como não temos um endpoint /me ainda, vamos apenas mostrar o login
+                // Em um app real, bateríamos em /api/app/me aqui
                 mostrarLogin();
             }
         }
 
         async function verificarToken(token) {
             try {
-                const resposta = await fetch(\`/api/autenticacao/verificar?token=\${token}\`);
+                const resposta = await fetch(\`/api/autenticacao/verify?token=\${token}\`);
                 const dados = await resposta.json();
 
                 if (dados.valido) {
-                    localStorage.setItem('token_autenticacao', token);
                     mostrarDashboard(dados.email);
                     // Limpar URL
                     window.history.replaceState({}, document.title, "/");
                 } else {
-                    localStorage.removeItem('token_autenticacao');
                     mostrarLogin();
                 }
             } catch (e) {
@@ -186,8 +183,8 @@ export const TEMPLATE_LOGIN_HTML = `
             }
         }
 
-        function sair() {
-            localStorage.removeItem('token_autenticacao');
+        async function sair() {
+            await fetch('/api/autenticacao/logout', { method: 'POST' });
             location.reload();
         }
 
