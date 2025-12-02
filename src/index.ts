@@ -1,11 +1,12 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { Ambiente } from "./config/ambiente";
+import { Ambiente, Variaveis } from "./config/ambiente";
 import authRoutes from "./routes/auth";
 import appRoutes from "./routes/app";
+import projetosRoutes from "./routes/projetos";
 import { AuthController } from "./controllers/AuthController";
 
-const app = new Hono<{ Bindings: Ambiente }>();
+const app = new Hono<{ Bindings: Ambiente, Variables: Variaveis }>();
 
 // Middleware Global
 app.use("*", cors());
@@ -22,6 +23,7 @@ app.route("/api/autenticacao", authRoutes);
 
 // Rotas Protegidas (App)
 app.route("/app", appRoutes);
+app.route("/api/app/projetos", projetosRoutes);
 
 // Rota Seed (Dev)
 app.get("/seed", async (c) => {

@@ -52,9 +52,9 @@ export const TEMPLATE_DASHBOARD_HTML = `
         }
 
         /* Sidebar Collapsed Hover Logic */
-        /* When sidebar has class 'collapsed', submenus behave differently */
+        /* CRITICAL: Force display block on hover only when sidebar has 'collapsed' class */
         #sidebar.collapsed .menu-group:hover .submenu-flyout {
-            display: block;
+            display: block !important;
             animation: fadeIn 0.2s ease-out;
         }
         
@@ -80,10 +80,10 @@ export const TEMPLATE_DASHBOARD_HTML = `
     </div>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed left-0 top-0 h-screen bg-white border-r border-gray-200 z-30 transition-all duration-300 ease-in-out w-72 flex flex-col transform -translate-x-full md:translate-x-0 pt-16 md:pt-0">
+    <aside id="sidebar" class="fixed left-0 top-0 h-screen bg-white border-r border-gray-200 z-40 transition-all duration-300 ease-in-out w-72 flex flex-col transform -translate-x-full md:translate-x-0 pt-16 md:pt-0">
         
         <!-- Desktop Header (Logo) -->
-        <div class="h-16 flex items-center px-6 border-b border-gray-100 hidden md:flex overflow-hidden whitespace-nowrap">
+        <div class="h-16 flex items-center px-6 border-b border-gray-100 hidden md:flex overflow-hidden whitespace-nowrap shrink-0">
             <div class="h-10 w-10 min-w-[2.5rem] bg-brand-yellow rounded-full flex items-center justify-center shadow-sm z-10">
                 <i class="fas fa-bolt text-white text-lg"></i>
             </div>
@@ -96,7 +96,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
         </button>
 
         <!-- Menu -->
-        <nav class="flex-1 p-4 space-y-2 overflow-y-auto no-scrollbar">
+        <nav id="sidebar-nav" class="flex-1 p-4 space-y-2 overflow-y-auto no-scrollbar">
             
             <!-- 1. Visão Geral (Link Direto) -->
             <a href="#" onclick="showSection('overview', this)" class="menu-item active flex items-center px-4 py-3 rounded-lg transition-all duration-200 group overflow-hidden whitespace-nowrap" title="Visão Geral">
@@ -121,9 +121,9 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 </div>
 
                 <!-- Submenu (Flyout Mode - Hidden by default, shown via CSS on hover when collapsed) -->
-                <div class="submenu-flyout hidden absolute left-16 top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2">
-                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg">Coleta</div>
-                    <a href="#" onclick="showSection('xmls', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Central de Arquivos</a>
+                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Coleta</div>
+                    <a href="#" onclick="showSection('xmls', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Central de Arquivos</a>
                 </div>
             </div>
 
@@ -142,10 +142,10 @@ export const TEMPLATE_DASHBOARD_HTML = `
                     <a href="#" onclick="showSection('tax-map', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Mapa Tributário</a>
                 </div>
 
-                <div class="submenu-flyout hidden absolute left-16 top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2">
-                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg">Inteligência</div>
-                    <a href="#" onclick="showSection('correlation', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Correlações</a>
-                    <a href="#" onclick="showSection('tax-map', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Mapa Tributário</a>
+                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Inteligência</div>
+                    <a href="#" onclick="showSection('correlation', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Correlações</a>
+                    <a href="#" onclick="showSection('tax-map', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Mapa Tributário</a>
                 </div>
             </div>
 
@@ -164,10 +164,10 @@ export const TEMPLATE_DASHBOARD_HTML = `
                     <a href="#" onclick="showSection('stock', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Auditoria de Estoque</a>
                 </div>
 
-                <div class="submenu-flyout hidden absolute left-16 top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2">
-                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg">Auditoria</div>
-                    <a href="#" onclick="showSection('audit', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Cruzamento XML/SPED</a>
-                    <a href="#" onclick="showSection('stock', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Auditoria de Estoque</a>
+                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Auditoria</div>
+                    <a href="#" onclick="showSection('audit', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Cruzamento XML/SPED</a>
+                    <a href="#" onclick="showSection('stock', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Auditoria de Estoque</a>
                 </div>
             </div>
 
@@ -185,16 +185,16 @@ export const TEMPLATE_DASHBOARD_HTML = `
                     <a href="#" onclick="showSection('strategy', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Riscos & Oportunidades</a>
                 </div>
 
-                <div class="submenu-flyout hidden absolute left-16 top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2">
-                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg">Estratégia</div>
-                    <a href="#" onclick="showSection('strategy', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Riscos & Oportunidades</a>
+                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Estratégia</div>
+                    <a href="#" onclick="showSection('strategy', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Riscos & Oportunidades</a>
                 </div>
             </div>
 
         </nav>
 
         <!-- User Profile -->
-        <div class="p-4 border-t border-gray-100 bg-white">
+        <div class="p-4 border-t border-gray-100 bg-white shrink-0">
             <div class="flex items-center mb-4 px-2 overflow-hidden whitespace-nowrap transition-all duration-300" id="user-profile-container">
                 <div class="h-10 w-10 min-w-[2.5rem] rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg">
                     {{INICIAIS}}
@@ -346,6 +346,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
 
         // Elements
         const sidebar = document.getElementById('sidebar');
+        const sidebarNav = document.getElementById('sidebar-nav');
         const mainContent = document.getElementById('main-content');
         const logoText = document.getElementById('logo-text');
         const menuTexts = document.querySelectorAll('.menu-text');
@@ -371,6 +372,10 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 sidebar.classList.add('w-20');
                 sidebar.classList.add('collapsed'); // Marker for CSS
                 
+                // Allow overflow so flyouts are visible
+                sidebarNav.classList.remove('overflow-y-auto');
+                sidebarNav.classList.add('overflow-visible');
+                
                 mainContent.classList.remove('md:ml-72');
                 mainContent.classList.add('md:ml-20');
 
@@ -395,6 +400,10 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 sidebar.classList.remove('w-20');
                 sidebar.classList.add('w-72');
                 sidebar.classList.remove('collapsed');
+                
+                // Restore scroll
+                sidebarNav.classList.add('overflow-y-auto');
+                sidebarNav.classList.remove('overflow-visible');
                 
                 mainContent.classList.remove('md:ml-20');
                 mainContent.classList.add('md:ml-72');
@@ -463,14 +472,16 @@ export const TEMPLATE_DASHBOARD_HTML = `
             document.getElementById('section-' + sectionId).classList.remove('hidden');
             
             // Reset active states
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active', 'bg-brand-yellow', 'text-gray-900', 'font-bold'));
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.add('text-gray-600'));
+            // Remove active from all items (direct links and flyout links)
+            document.querySelectorAll('a[onclick^="showSection"]').forEach(el => {
+                el.classList.remove('active', 'bg-brand-yellow', 'text-gray-900', 'font-bold');
+                if(!el.classList.contains('text-gray-600')) el.classList.add('text-gray-600');
+            });
             
-            // Highlight current item (if it's a direct link)
-            if (element.classList.contains('menu-item')) {
-                element.classList.add('active');
-                element.classList.remove('text-gray-600');
-            }
+            // Highlight current item
+            element.classList.add('active');
+            element.classList.remove('text-gray-600');
+            // If it is a flyout item, style it specifically if needed, but 'active' class handles bg color
             
             // Close sidebar on mobile after selection
             if (window.innerWidth < 768) {
