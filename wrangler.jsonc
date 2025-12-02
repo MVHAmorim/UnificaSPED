@@ -13,6 +13,12 @@
             "id": "81c108dea2974286b8b9ac276cd0fce9"
         }
     ],
+    "r2_buckets": [
+        {
+            "binding": "ARQUIVOS_USUARIOS",
+            "bucket_name": "dados-usuarios"
+        }
+    ],
     "vars": {
         "AWS_REGION": "us-east-1",
         "SES_FROM_EMAIL": "no-reply@spedito.com.br"

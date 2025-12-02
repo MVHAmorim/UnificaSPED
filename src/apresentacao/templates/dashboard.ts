@@ -38,6 +38,30 @@ export const TEMPLATE_DASHBOARD_HTML = `
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
         }
+        
+        /* Submenu Transitions */
+        .submenu {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .submenu.open {
+            max-height: 500px; /* Arbitrary large height */
+            opacity: 1;
+        }
+
+        /* Sidebar Collapsed Hover Logic */
+        /* When sidebar has class 'collapsed', submenus behave differently */
+        #sidebar.collapsed .menu-group:hover .submenu-flyout {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-900 overflow-x-hidden">
@@ -63,7 +87,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
             <div class="h-10 w-10 min-w-[2.5rem] bg-brand-yellow rounded-full flex items-center justify-center shadow-sm z-10">
                 <i class="fas fa-bolt text-white text-lg"></i>
             </div>
-            <span id="logo-text" class="font-extrabold text-2xl text-gray-900 tracking-tight ml-3 transition-all duration-300 opacity-100">Spedito</span>
+            <span id="logo-text" class="font-extrabold text-2xl text-gray-900 tracking-tight ml-3 transition-all duration-300 opacity-100">SPEDito</span>
         </div>
 
         <!-- Toggle Button (Desktop) -->
@@ -72,27 +96,101 @@ export const TEMPLATE_DASHBOARD_HTML = `
         </button>
 
         <!-- Menu -->
-        <nav class="flex-1 p-4 space-y-1 overflow-y-auto no-scrollbar">
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto no-scrollbar">
+            
+            <!-- 1. Visão Geral (Link Direto) -->
             <a href="#" onclick="showSection('overview', this)" class="menu-item active flex items-center px-4 py-3 rounded-lg transition-all duration-200 group overflow-hidden whitespace-nowrap" title="Visão Geral">
                 <i class="fas fa-chart-pie w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
-                <span class="menu-text ml-3 transition-opacity duration-300 opacity-100">Visão Geral</span>
+                <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Visão Geral</span>
             </a>
-            <a href="#" onclick="showSection('xmls', this)" class="menu-item flex items-center px-4 py-3 rounded-lg text-gray-600 transition-all duration-200 group overflow-hidden whitespace-nowrap" title="XMLs & SPED">
-                <i class="fas fa-file-code w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
-                <span class="menu-text ml-3 transition-opacity duration-300 opacity-100">XMLs & SPED</span>
-            </a>
-            <a href="#" onclick="showSection('correlation', this)" class="menu-item flex items-center px-4 py-3 rounded-lg text-gray-600 transition-all duration-200 group overflow-hidden whitespace-nowrap" title="Correlação">
-                <i class="fas fa-link w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
-                <span class="menu-text ml-3 transition-opacity duration-300 opacity-100">Correlação</span>
-            </a>
-            <a href="#" onclick="showSection('tax-map', this)" class="menu-item flex items-center px-4 py-3 rounded-lg text-gray-600 transition-all duration-200 group overflow-hidden whitespace-nowrap" title="Mapa Tributário">
-                <i class="fas fa-balance-scale w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
-                <span class="menu-text ml-3 transition-opacity duration-300 opacity-100">Mapa Tributário</span>
-            </a>
-            <a href="#" onclick="showSection('settings', this)" class="menu-item flex items-center px-4 py-3 rounded-lg text-gray-600 transition-all duration-200 group overflow-hidden whitespace-nowrap" title="Configurações">
-                <i class="fas fa-cog w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
-                <span class="menu-text ml-3 transition-opacity duration-300 opacity-100">Configurações</span>
-            </a>
+
+            <!-- 2. COLETA (Accordion/Flyout) -->
+            <div class="menu-group relative">
+                <!-- Parent Item -->
+                <div onclick="toggleSubmenu('submenu-coleta')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Coleta">
+                    <div class="flex items-center">
+                        <i class="fas fa-cloud-upload-alt w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
+                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Coleta</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
+                </div>
+                
+                <!-- Submenu (Accordion Mode) -->
+                <div id="submenu-coleta" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
+                    <a href="#" onclick="showSection('xmls', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Central de Arquivos</a>
+                </div>
+
+                <!-- Submenu (Flyout Mode - Hidden by default, shown via CSS on hover when collapsed) -->
+                <div class="submenu-flyout hidden absolute left-16 top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg">Coleta</div>
+                    <a href="#" onclick="showSection('xmls', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Central de Arquivos</a>
+                </div>
+            </div>
+
+            <!-- 3. INTELIGÊNCIA (Accordion/Flyout) -->
+            <div class="menu-group relative">
+                <div onclick="toggleSubmenu('submenu-inteligencia')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Inteligência">
+                    <div class="flex items-center">
+                        <i class="fas fa-brain w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
+                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Inteligência</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
+                </div>
+                
+                <div id="submenu-inteligencia" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
+                    <a href="#" onclick="showSection('correlation', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Correlações</a>
+                    <a href="#" onclick="showSection('tax-map', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Mapa Tributário</a>
+                </div>
+
+                <div class="submenu-flyout hidden absolute left-16 top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg">Inteligência</div>
+                    <a href="#" onclick="showSection('correlation', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Correlações</a>
+                    <a href="#" onclick="showSection('tax-map', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Mapa Tributário</a>
+                </div>
+            </div>
+
+            <!-- 4. AUDITORIA (Accordion/Flyout) -->
+            <div class="menu-group relative">
+                <div onclick="toggleSubmenu('submenu-auditoria')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Auditoria">
+                    <div class="flex items-center">
+                        <i class="fas fa-clipboard-check w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
+                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Auditoria</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
+                </div>
+                
+                <div id="submenu-auditoria" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
+                    <a href="#" onclick="showSection('audit', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Cruzamento XML/SPED</a>
+                    <a href="#" onclick="showSection('stock', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Auditoria de Estoque</a>
+                </div>
+
+                <div class="submenu-flyout hidden absolute left-16 top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg">Auditoria</div>
+                    <a href="#" onclick="showSection('audit', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Cruzamento XML/SPED</a>
+                    <a href="#" onclick="showSection('stock', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Auditoria de Estoque</a>
+                </div>
+            </div>
+
+            <!-- 5. ESTRATÉGIA (Accordion/Flyout) -->
+            <div class="menu-group relative">
+                <div onclick="toggleSubmenu('submenu-estrategia')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Estratégia">
+                    <div class="flex items-center">
+                        <i class="far fa-gem w-6 text-center min-w-[1.5rem] text-brand-yellow transition-all duration-300 group-hover:scale-110"></i>
+                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Estratégia</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
+                </div>
+                
+                <div id="submenu-estrategia" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
+                    <a href="#" onclick="showSection('strategy', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Riscos & Oportunidades</a>
+                </div>
+
+                <div class="submenu-flyout hidden absolute left-16 top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg">Estratégia</div>
+                    <a href="#" onclick="showSection('strategy', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50">Riscos & Oportunidades</a>
+                </div>
+            </div>
+
         </nav>
 
         <!-- User Profile -->
@@ -180,9 +278,9 @@ export const TEMPLATE_DASHBOARD_HTML = `
             </div>
         </div>
 
-        <!-- Section: XMLs & SPED -->
+        <!-- Section: Central de Arquivos -->
         <div id="section-xmls" class="content-section hidden space-y-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">XMLs & SPED</h1>
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">Central de Arquivos</h1>
             <div class="bg-white p-12 rounded-xl shadow-sm border border-gray-100 text-center border-dashed border-2 border-gray-300">
                 <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
                 <p class="text-gray-600">Arraste seus arquivos XML ou TXT aqui</p>
@@ -194,14 +292,32 @@ export const TEMPLATE_DASHBOARD_HTML = `
 
         <!-- Section: Correlação -->
         <div id="section-correlation" class="content-section hidden space-y-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">Correlação Inteligente</h1>
-            <p class="text-gray-600">Módulo de correlação de itens (Em desenvolvimento).</p>
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">Correlações & Fatores</h1>
+            <p class="text-gray-600">Módulo de correlação de itens e fatores de conversão.</p>
         </div>
 
         <!-- Section: Mapa Tributário -->
         <div id="section-tax-map" class="content-section hidden space-y-6">
             <h1 class="text-2xl font-bold text-gray-900 mb-6">Mapa Tributário</h1>
-            <p class="text-gray-600">Configuração de regras tributárias (Em desenvolvimento).</p>
+            <p class="text-gray-600">Configuração de regras tributárias e exceções.</p>
+        </div>
+
+        <!-- Section: Cruzamento XML x SPED -->
+        <div id="section-audit" class="content-section hidden space-y-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">Cruzamento XML x SPED</h1>
+            <p class="text-gray-600">Auditoria de divergências entre notas fiscais e escrituração.</p>
+        </div>
+
+        <!-- Section: Auditoria de Estoque -->
+        <div id="section-stock" class="content-section hidden space-y-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">Auditoria de Estoque</h1>
+            <p class="text-gray-600">Análise do Bloco K e Inventário.</p>
+        </div>
+
+        <!-- Section: Estratégia -->
+        <div id="section-strategy" class="content-section hidden space-y-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">Riscos & Oportunidades</h1>
+            <p class="text-gray-600">Dashboard estratégico de compliance e recuperação de créditos.</p>
         </div>
 
         <!-- Section: Configurações -->
@@ -233,6 +349,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
         const mainContent = document.getElementById('main-content');
         const logoText = document.getElementById('logo-text');
         const menuTexts = document.querySelectorAll('.menu-text');
+        const menuArrows = document.querySelectorAll('.menu-arrow');
         const userInfo = document.getElementById('user-info');
         const logoutText = document.getElementById('logout-text');
         const toggleIcon = document.getElementById('sidebar-toggle-icon');
@@ -252,6 +369,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 // Collapse
                 sidebar.classList.remove('w-72');
                 sidebar.classList.add('w-20');
+                sidebar.classList.add('collapsed'); // Marker for CSS
                 
                 mainContent.classList.remove('md:ml-72');
                 mainContent.classList.add('md:ml-20');
@@ -261,6 +379,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 logoText.classList.remove('ml-3');
                 
                 menuTexts.forEach(el => el.classList.add('opacity-0', 'w-0', 'hidden'));
+                menuArrows.forEach(el => el.classList.add('hidden')); // Hide accordion arrows
                 
                 userInfo.classList.add('opacity-0', 'w-0', 'hidden');
                 logoutText.classList.add('opacity-0', 'w-0', 'hidden');
@@ -268,11 +387,14 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 // Rotate Icon
                 toggleIcon.classList.add('rotate-180');
                 
-                // Center items logic is handled by flex/grid and width constraints automatically
+                // Close all open submenus to prevent visual bugs
+                closeAllSubmenus();
+
             } else {
                 // Expand
                 sidebar.classList.remove('w-20');
                 sidebar.classList.add('w-72');
+                sidebar.classList.remove('collapsed');
                 
                 mainContent.classList.remove('md:ml-20');
                 mainContent.classList.add('md:ml-72');
@@ -282,6 +404,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 logoText.classList.add('ml-3');
                 
                 menuTexts.forEach(el => el.classList.remove('opacity-0', 'w-0', 'hidden'));
+                menuArrows.forEach(el => el.classList.remove('hidden'));
                 
                 userInfo.classList.remove('opacity-0', 'w-0', 'hidden');
                 logoutText.classList.remove('opacity-0', 'w-0', 'hidden');
@@ -293,6 +416,31 @@ export const TEMPLATE_DASHBOARD_HTML = `
 
         function toggleSidebarDesktop() {
             setSidebarState(!isSidebarCollapsed);
+        }
+
+        function toggleSubmenu(submenuId) {
+            // Only work if sidebar is expanded
+            if (isSidebarCollapsed) return;
+
+            const submenu = document.getElementById(submenuId);
+            const parent = submenu.previousElementSibling;
+            const arrow = parent.querySelector('.menu-arrow');
+
+            if (submenu.classList.contains('open')) {
+                submenu.classList.remove('open');
+                arrow.classList.remove('rotate-180');
+            } else {
+                // Optional: Close other submenus (Accordion behavior)
+                // closeAllSubmenus(); 
+                
+                submenu.classList.add('open');
+                arrow.classList.add('rotate-180');
+            }
+        }
+
+        function closeAllSubmenus() {
+            document.querySelectorAll('.submenu').forEach(el => el.classList.remove('open'));
+            document.querySelectorAll('.menu-arrow').forEach(el => el.classList.remove('rotate-180'));
         }
 
         function toggleSidebarMobile() {
@@ -314,12 +462,15 @@ export const TEMPLATE_DASHBOARD_HTML = `
             // Show selected section
             document.getElementById('section-' + sectionId).classList.remove('hidden');
             
-            // Update menu active state
+            // Reset active states
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active', 'bg-brand-yellow', 'text-gray-900', 'font-bold'));
             document.querySelectorAll('.menu-item').forEach(el => el.classList.add('text-gray-600'));
             
-            element.classList.add('active');
-            element.classList.remove('text-gray-600');
+            // Highlight current item (if it's a direct link)
+            if (element.classList.contains('menu-item')) {
+                element.classList.add('active');
+                element.classList.remove('text-gray-600');
+            }
             
             // Close sidebar on mobile after selection
             if (window.innerWidth < 768) {
