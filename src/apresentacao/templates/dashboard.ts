@@ -105,7 +105,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
             </a>
 
             <!-- 2. COLETA (Accordion/Flyout) -->
-            <div class="menu-group relative">
+            <div class="menu-group relative group">
                 <!-- Parent Item -->
                 <div onclick="toggleSubmenu('submenu-coleta')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Coleta">
                     <div class="flex items-center">
@@ -128,7 +128,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
             </div>
 
             <!-- 3. INTELIGÊNCIA (Accordion/Flyout) -->
-            <div class="menu-group relative">
+            <div class="menu-group relative group">
                 <div onclick="toggleSubmenu('submenu-inteligencia')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Inteligência">
                     <div class="flex items-center">
                         <i class="fas fa-brain w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
@@ -150,7 +150,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
             </div>
 
             <!-- 4. AUDITORIA (Accordion/Flyout) -->
-            <div class="menu-group relative">
+            <div class="menu-group relative group">
                 <div onclick="toggleSubmenu('submenu-auditoria')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Auditoria">
                     <div class="flex items-center">
                         <i class="fas fa-clipboard-check w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
@@ -172,7 +172,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
             </div>
 
             <!-- 5. ESTRATÉGIA (Accordion/Flyout) -->
-            <div class="menu-group relative">
+            <div class="menu-group relative group">
                 <div onclick="toggleSubmenu('submenu-estrategia')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Estratégia">
                     <div class="flex items-center">
                         <i class="far fa-gem w-6 text-center min-w-[1.5rem] text-brand-yellow transition-all duration-300 group-hover:scale-110"></i>
