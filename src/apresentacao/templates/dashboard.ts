@@ -224,7 +224,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
                     <h1 class="text-2xl font-bold text-gray-900">Visão Geral</h1>
                     <p class="text-gray-500">Bem-vindo de volta, {{NOME}}.</p>
                 </div>
-                <button class="bg-brand-yellow hover:bg-yellow-300 text-gray-900 font-bold py-2 px-4 rounded-lg shadow-sm transition-colors">
+                <button onclick="openProjectModal()" class="bg-brand-yellow hover:bg-yellow-300 text-gray-900 font-bold py-2 px-4 rounded-lg shadow-sm transition-colors">
                     <i class="fas fa-plus mr-2"></i> Novo Projeto
                 </button>
             </header>
@@ -281,6 +281,15 @@ export const TEMPLATE_DASHBOARD_HTML = `
         <!-- Section: Central de Arquivos -->
         <div id="section-xmls" class="content-section hidden space-y-6">
             <h1 class="text-2xl font-bold text-gray-900 mb-6">Central de Arquivos</h1>
+            
+            <!-- Project Selection -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+                <label for="select-projeto" class="block text-sm font-medium text-gray-700 mb-2">Selecione o Projeto (Cliente)</label>
+                <select id="select-projeto" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-brand-yellow focus:border-brand-yellow sm:text-sm rounded-md border">
+                    <option value="">Selecione um projeto...</option>
+                </select>
+            </div>
+
             <div class="bg-white p-12 rounded-xl shadow-sm border border-gray-100 text-center border-dashed border-2 border-gray-300">
                 <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
                 <p class="text-gray-600">Arraste seus arquivos XML ou TXT aqui</p>
@@ -339,6 +348,47 @@ export const TEMPLATE_DASHBOARD_HTML = `
         </div>
 
     </main>
+
+    <!-- Modal Novo Projeto -->
+    <div id="modal-novo-projeto" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeProjectModal()"></div>
+
+            <!-- Modal panel -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-folder-plus text-yellow-600"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Novo Projeto</h3>
+                            <div class="mt-2 space-y-4">
+                                <div>
+                                    <label for="projeto-nome" class="block text-sm font-medium text-gray-700">Nome do Cliente/Projeto</label>
+                                    <input type="text" name="projeto-nome" id="projeto-nome" class="mt-1 focus:ring-brand-yellow focus:border-brand-yellow block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2" placeholder="Ex: Indústria ABC Ltda">
+                                </div>
+                                <div>
+                                    <label for="projeto-cnpj" class="block text-sm font-medium text-gray-700">CNPJ</label>
+                                    <input type="text" name="projeto-cnpj" id="projeto-cnpj" class="mt-1 focus:ring-brand-yellow focus:border-brand-yellow block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2" placeholder="00.000.000/0000-00">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" onclick="criarProjeto()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-brand-yellow text-base font-medium text-gray-900 hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-yellow sm:ml-3 sm:w-auto sm:text-sm">
+                        Criar Projeto
+                    </button>
+                    <button type="button" onclick="closeProjectModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // State
@@ -499,8 +549,86 @@ export const TEMPLATE_DASHBOARD_HTML = `
             }
         }
 
+        // Project Management
+        function openProjectModal() {
+            document.getElementById('modal-novo-projeto').classList.remove('hidden');
+            document.getElementById('projeto-nome').focus();
+        }
+
+        function closeProjectModal() {
+            document.getElementById('modal-novo-projeto').classList.add('hidden');
+            document.getElementById('projeto-nome').value = '';
+            document.getElementById('projeto-cnpj').value = '';
+        }
+
+        async function criarProjeto() {
+            const nome = document.getElementById('projeto-nome').value;
+            const cnpj = document.getElementById('projeto-cnpj').value;
+
+            if (!nome || !cnpj) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/app/projetos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, cnpj })
+                });
+
+                if (response.ok) {
+                    const projeto = await response.json();
+                    closeProjectModal();
+                    await carregarProjetos();
+                    // Selecionar o recém criado
+                    document.getElementById('select-projeto').value = projeto.id;
+                    alert('Projeto criado com sucesso!');
+                } else {
+                    const err = await response.json();
+                    alert('Erro ao criar projeto: ' + (err.erro || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro de conexão ao criar projeto.');
+            }
+        }
+
+        async function carregarProjetos() {
+            try {
+                const response = await fetch('/api/app/projetos');
+                if (response.ok) {
+                    const projetos = await response.json();
+                    const select = document.getElementById('select-projeto');
+                    
+                    // Guardar seleção atual se houver
+                    const atual = select.value;
+
+                    select.innerHTML = '<option value="">Selecione um projeto...</option>';
+                    
+                    projetos.forEach(p => {
+                        const option = document.createElement('option');
+                        option.value = p.id;
+                        option.textContent = p.nome + ' (' + p.cnpj + ')';
+                        select.appendChild(option);
+                    });
+
+                    // Restaurar seleção ou selecionar o último se não houver seleção anterior e tiver projetos
+                    if (atual && projetos.find(p => p.id === atual)) {
+                        select.value = atual;
+                    } else if (projetos.length > 0) {
+                        // Opcional: Selecionar o último criado (assumindo ordem de criação)
+                        select.value = projetos[projetos.length - 1].id;
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar projetos:', error);
+            }
+        }
+
         // Initialize on load
         initSidebar();
+        carregarProjetos();
     </script>
 </body>
 </html>
