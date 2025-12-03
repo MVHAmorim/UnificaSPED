@@ -11,6 +11,10 @@
         {
             "binding": "SessoesSpedito",
             "id": "81c108dea2974286b8b9ac276cd0fce9"
+        },
+        {
+            "binding": "ProjetosSpedito",
+            "id": "de29c960cbe44df6bf8ebd17edd5f0e7"
         }
     ],
     "r2_buckets": [

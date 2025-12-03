@@ -285,17 +285,219 @@ export const TEMPLATE_DASHBOARD_HTML = `
             <!-- Project Selection -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
                 <label for="select-projeto" class="block text-sm font-medium text-gray-700 mb-2">Selecione o Projeto (Cliente)</label>
+        <!-- Toggle Button (Desktop) -->
+        <button onclick="toggleSidebarDesktop()" class="hidden md:flex absolute -right-3 top-20 bg-white border border-gray-200 rounded-full h-6 w-6 items-center justify-center text-gray-500 hover:text-brand-yellow hover:border-brand-yellow shadow-sm focus:outline-none z-50 transition-transform duration-300" id="sidebar-toggle-btn">
+            <i class="fas fa-chevron-left text-xs transition-transform duration-300" id="sidebar-toggle-icon"></i>
+        </button>
+
+        <!-- Menu -->
+        <nav id="sidebar-nav" class="flex-1 p-4 space-y-2 overflow-y-auto no-scrollbar">
+            
+            <!-- 1. Visão Geral (Link Direto) -->
+            <a href="#" onclick="showSection('overview', this)" class="menu-item active flex items-center px-4 py-3 rounded-lg transition-all duration-200 group overflow-hidden whitespace-nowrap" title="Visão Geral">
+                <i class="fas fa-chart-pie w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
+                <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Visão Geral</span>
+            </a>
+
+            <!-- 2. COLETA (Accordion/Flyout) -->
+            <div class="menu-group relative group">
+                <!-- Parent Item -->
+                <div onclick="toggleSubmenu('submenu-coleta')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Coleta">
+                    <div class="flex items-center">
+                        <i class="fas fa-cloud-upload-alt w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
+                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Coleta</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
+                </div>
+                
+                <!-- Submenu (Accordion Mode) -->
+                <div id="submenu-coleta" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
+                    <a href="#" onclick="showSection('xmls', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Central de Arquivos</a>
+                </div>
+
+                <!-- Submenu (Flyout Mode - Hidden by default, shown via CSS on hover when collapsed) -->
+                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Coleta</div>
+                    <a href="#" onclick="showSection('xmls', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Central de Arquivos</a>
+                </div>
+            </div>
+
+            <!-- 3. INTELIGÊNCIA (Accordion/Flyout) -->
+            <div class="menu-group relative group">
+                <div onclick="toggleSubmenu('submenu-inteligencia')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Inteligência">
+                    <div class="flex items-center">
+                        <i class="fas fa-brain w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
+                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Inteligência</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
+                </div>
+                
+                <div id="submenu-inteligencia" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
+                    <a href="#" onclick="showSection('correlation', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Correlações</a>
+                    <a href="#" onclick="showSection('tax-map', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Mapa Tributário</a>
+                </div>
+
+                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Inteligência</div>
+                    <a href="#" onclick="showSection('correlation', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Correlações</a>
+                    <a href="#" onclick="showSection('tax-map', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Mapa Tributário</a>
+                </div>
+            </div>
+
+            <!-- 4. AUDITORIA (Accordion/Flyout) -->
+            <div class="menu-group relative group">
+                <div onclick="toggleSubmenu('submenu-auditoria')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Auditoria">
+                    <div class="flex items-center">
+                        <i class="fas fa-clipboard-check w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
+                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Auditoria</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
+                </div>
+                
+                <div id="submenu-auditoria" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
+                    <a href="#" onclick="showSection('audit', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Cruzamento XML/SPED</a>
+                    <a href="#" onclick="showSection('stock', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Auditoria de Estoque</a>
+                </div>
+
+                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Auditoria</div>
+                    <a href="#" onclick="showSection('audit', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Cruzamento XML/SPED</a>
+                    <a href="#" onclick="showSection('stock', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Auditoria de Estoque</a>
+                </div>
+            </div>
+
+            <!-- 5. ESTRATÉGIA (Accordion/Flyout) -->
+            <div class="menu-group relative group">
+                <div onclick="toggleSubmenu('submenu-estrategia')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Estratégia">
+                    <div class="flex items-center">
+                        <i class="far fa-gem w-6 text-center min-w-[1.5rem] text-brand-yellow transition-all duration-300 group-hover:scale-110"></i>
+                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Estratégia</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
+                </div>
+                
+                <div id="submenu-estrategia" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
+                    <a href="#" onclick="showSection('strategy', this)" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Riscos & Oportunidades</a>
+                </div>
+
+                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
+                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Estratégia</div>
+                    <a href="#" onclick="showSection('strategy', this)" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Riscos & Oportunidades</a>
+                </div>
+            </div>
+
+        </nav>
+
+        <!-- User Profile -->
+        <div class="p-4 border-t border-gray-100 bg-white shrink-0">
+            <div class="flex items-center mb-4 px-2 overflow-hidden whitespace-nowrap transition-all duration-300" id="user-profile-container">
+                <div class="h-10 w-10 min-w-[2.5rem] rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg">
+                    {{INICIAIS}}
+                </div>
+                <div class="ml-3 overflow-hidden transition-opacity duration-300 opacity-100" id="user-info">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{NOME}}</p>
+                    <p class="text-xs text-gray-500 truncate">{{EMAIL}}</p>
+                </div>
+            </div>
+            <button onclick="logout()" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 overflow-hidden whitespace-nowrap group" title="Sair">
+                <i class="fas fa-sign-out-alt min-w-[1rem]"></i> 
+                <span class="ml-2 transition-opacity duration-300 opacity-100" id="logout-text">Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile -->
+    <div id="sidebar-overlay" onclick="toggleSidebarMobile()" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1 p-4 md:p-8 pt-20 md:pt-8 min-h-screen transition-all duration-300 ease-in-out md:ml-72">
+        
+        <!-- Section: Visão Geral -->
+        <div id="section-overview" class="content-section space-y-6">
+            <header class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Visão Geral</h1>
+                    <p class="text-gray-500">Bem-vindo de volta, {{NOME}}.</p>
+                </div>
+                <button onclick="openProjectModal()" class="bg-brand-yellow hover:bg-yellow-300 text-gray-900 font-bold py-2 px-4 rounded-lg shadow-sm transition-colors">
+                    <i class="fas fa-plus mr-2"></i> Novo Projeto
+                </button>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gray-500 text-sm font-medium">Projetos Ativos</h3>
+                        <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded-full">Atualizado</span>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900">12</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gray-500 text-sm font-medium">Arquivos Processados</h3>
+                        <i class="fas fa-file-alt text-gray-400"></i>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900">1,248</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gray-500 text-sm font-medium">Economia Gerada</h3>
+                        <i class="fas fa-chart-line text-green-500"></i>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900">R$ 45.2k</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Atividade Recente</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                        <div class="h-10 w-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">Upload de SPED Fiscal - Competência 10/2024</p>
+                            <p class="text-xs text-gray-500">Há 2 horas</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                        <div class="h-10 w-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">Correlação Automática Finalizada</p>
+                            <p class="text-xs text-gray-500">Há 5 horas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Central de Arquivos -->
+        <div id="section-xmls" class="content-section hidden space-y-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">Central de Arquivos</h1>
+            
+            <!-- Project Selection -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+                <label for="select-projeto" class="block text-sm font-medium text-gray-700 mb-2">Selecione o Projeto (Cliente)</label>
                 <select id="select-projeto" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-brand-yellow focus:border-brand-yellow sm:text-sm rounded-md border">
                     <option value="">Selecione um projeto...</option>
                 </select>
             </div>
 
-            <div class="bg-white p-12 rounded-xl shadow-sm border border-gray-100 text-center border-dashed border-2 border-gray-300">
+            <div id="drop-zone" class="bg-white p-12 rounded-xl shadow-sm border border-gray-100 text-center border-dashed border-2 border-gray-300 transition-colors duration-200">
                 <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
                 <p class="text-gray-600">Arraste seus arquivos XML ou TXT aqui</p>
-                <button class="mt-4 bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors">
+                <button id="btn-select-files" class="mt-4 bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors">
                     Selecionar Arquivos
                 </button>
+                <input type="file" id="file-input" multiple class="hidden" accept=".xml,.txt">
+            </div>
+
+            <!-- Upload Feedback -->
+            <div id="upload-feedback" class="hidden bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-center">
+                <i class="fas fa-spinner fa-spin text-blue-500 mr-3 text-xl"></i>
+                <span class="text-blue-700 font-medium">Enviando arquivos... Por favor, aguarde.</span>
             </div>
         </div>
 
@@ -629,7 +831,86 @@ export const TEMPLATE_DASHBOARD_HTML = `
         // Initialize on load
         initSidebar();
         carregarProjetos();
+
+        // Upload Logic
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const btnSelectFiles = document.getElementById('btn-select-files');
+        const uploadFeedback = document.getElementById('upload-feedback');
+
+        // Click to select
+        btnSelectFiles.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFiles(e.target.files);
+            }
+        });
+
+        // Drag & Drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-brand-yellow', 'bg-yellow-50');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-brand-yellow', 'bg-yellow-50');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-brand-yellow', 'bg-yellow-50');
+            if (e.dataTransfer.files.length > 0) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        async function handleFiles(files) {
+            const selectProjeto = document.getElementById('select-projeto');
+            const projectId = selectProjeto.value;
+
+            if (!projectId) {
+                alert('Por favor, selecione um projeto antes de enviar arquivos.');
+                return;
+            }
+
+            // Show Feedback
+            uploadFeedback.classList.remove('hidden');
+            dropZone.classList.add('opacity-50', 'pointer-events-none');
+
+            const formData = new FormData();
+            formData.append('projectId', projectId);
+            
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files[]', files[i]);
+            }
+
+            try {
+                const response = await fetch('/api/app/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Sucesso: ' + result.mensagem);
+                    fileInput.value = ''; // Clear input
+                } else {
+                    alert('Erro ao enviar: ' + (result.erro || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro no upload:', error);
+                alert('Erro de conexão ao enviar arquivos.');
+            } finally {
+                // Hide Feedback
+                uploadFeedback.classList.add('hidden');
+                dropZone.classList.remove('opacity-50', 'pointer-events-none');
+            }
+        }
     </script>
 </body>
-</html>
-`;
+</html>`;

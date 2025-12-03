@@ -55,7 +55,7 @@ export class ProjetoController {
             return c.json(novoProjeto, 201);
         } catch (erro) {
             console.error('Erro ao criar projeto:', erro);
-            return c.json({ erro: 'Erro interno ao criar projeto' }, 500);
+            return c.json({ erro: 'Erro interno: ' + (erro instanceof Error ? erro.message : String(erro)) }, 500);
         }
     }
 }
