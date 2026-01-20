@@ -6,6 +6,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - SPEDito</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -61,6 +62,26 @@ export const TEMPLATE_DASHBOARD_HTML = `
         @keyframes fadeIn {
             from { opacity: 0; transform: translateX(-10px); }
             to { opacity: 1; transform: translateX(0); }
+        }
+
+        @media print {
+            #sidebar, header, #sidebar-toggle-btn, .no-print {
+                display: none !important;
+            }
+            #main-content {
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+            .content-section {
+                display: block !important; /* Força exibir o relatório mesmo se escondido via JS */
+            }
+            /* Esconder outras seções que não sejam a de auditoria se estiver nela */
+            body > :not(#main-content) {
+                display: none;
+            }
+            /* Garantir que cores de fundo sejam impressas */
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
     </style>
 </head>
@@ -320,8 +341,124 @@ export const TEMPLATE_DASHBOARD_HTML = `
 
         <!-- Section: Cruzamento XML x SPED -->
         <div id="section-audit" class="content-section hidden space-y-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">Cruzamento XML x SPED</h1>
-            <p class="text-gray-600">Auditoria de divergências entre notas fiscais e escrituração.</p>
+            <!-- Header Fixo -->
+            <div class="flex justify-between items-center no-print">
+                <h1 class="text-2xl font-bold text-gray-900">Cruzamento XML x SPED</h1>
+                <div class="flex space-x-2">
+                    <button onclick="voltarParaHistorico()" id="btn-voltar-audit" class="hidden px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i class="fas fa-arrow-left mr-2"></i> Voltar
+                    </button>
+                    <button onclick="triggerNewAudit()" class="bg-brand-yellow hover:bg-yellow-300 text-gray-900 font-bold py-2 px-4 rounded-lg shadow-sm">
+                        <i class="fas fa-plus mr-2"></i> Nova Auditoria
+                    </button>
+                    <input type="file" id="input-audit-file" class="hidden" accept=".txt">
+                </div>
+            </div>
+
+            <!-- Feedback de Loading -->
+            <div id="audit-loading" class="hidden bg-blue-50 p-4 rounded-lg flex items-center justify-center text-blue-700">
+                <i class="fas fa-spinner fa-spin mr-3 text-xl"></i> Processando Auditoria... Isso pode levar alguns segundos.
+            </div>
+
+            <!-- VIEW 1: Histórico -->
+            <div id="view-audit-history" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div id="audit-history-container" class="hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arquivo SPED</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="audit-history-list" class="bg-white divide-y divide-gray-200">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="audit-empty-state" class="p-12 text-center text-gray-500">
+                    <i class="fas fa-clipboard-list text-4xl mb-4 text-gray-300"></i>
+                    <p>Nenhuma auditoria realizada para este projeto ou projeto não selecionado.</p>
+                </div>
+            </div>
+
+            <!-- VIEW 2: Relatório (Sales Pitch) -->
+            <div id="view-audit-report" class="hidden space-y-6">
+                
+                <!-- Cards de Impacto -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Card Verde: Oportunidade -->
+                    <div class="bg-gradient-to-br from-green-50 to-white p-6 rounded-xl shadow-sm border border-green-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <i class="fas fa-money-bill-wave text-6xl text-green-600"></i>
+                        </div>
+                        <h3 class="text-green-800 font-medium mb-1">Potencial de Crédito Matches (ICMS)</h3>
+                        <p id="card-credit-value" class="text-3xl font-bold text-green-600">R$ 0,00</p>
+                        <p class="text-sm text-green-700 mt-2">Valores em XMLs não escriturados</p>
+                    </div>
+
+                    <!-- Card Vermelho: Risco -->
+                    <div class="bg-gradient-to-br from-red-50 to-white p-6 rounded-xl shadow-sm border border-red-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <i class="fas fa-exclamation-triangle text-6xl text-red-600"></i>
+                        </div>
+                        <h3 class="text-red-800 font-medium mb-1">Risco Estimado (Multas)</h3>
+                        <p id="card-risk-value" class="text-3xl font-bold text-red-600">R$ 0,00</p>
+                        <p class="text-sm text-red-700 mt-2">Estimativa sobre divergências</p>
+                    </div>
+
+                    <!-- Card Amarelo: Operacional -->
+                    <div class="bg-gradient-to-br from-yellow-50 to-white p-6 rounded-xl shadow-sm border border-yellow-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <i class="fas fa-file-invoice-dollar text-6xl text-yellow-600"></i>
+                        </div>
+                        <h3 class="text-yellow-800 font-medium mb-1">Notas Faltantes (XML)</h3>
+                        <p id="card-missing-xml-count" class="text-3xl font-bold text-yellow-600">0</p>
+                        <p class="text-sm text-yellow-700 mt-2">Escrituradas sem arquivo digital</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico e Detalhes -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Gráfico -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 class="font-bold text-gray-900 mb-4">Volume de Divergências</h3>
+                        <div class="relative h-64">
+                             <canvas id="auditChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Resumo/Download -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
+                        <div class="mb-6">
+                            <h3 class="font-bold text-gray-900 text-lg">Download do Relatório</h3>
+                            <p class="text-gray-500 max-w-xs mx-auto mt-2">Tenha acesso a lista detalhada de todas as chaves de acesso divergentes em formato JSON para integração.</p>
+                        </div>
+                        <a id="btn-download-json" href="#" target="_blank" class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center">
+                            <i class="fas fa-download mr-2"></i> Baixar JSON Completo
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tabela de Divergências (Preview - Primeiros 10 itens) -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="font-bold text-gray-900 mb-4">Amostra de Divergências (Top 10)</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Descrição</th>
+                                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Valor ICMS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-divergences-list" class="divide-y divide-gray-200 text-sm">
+                                <!-- Preenchido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Section: Auditoria de Estoque -->
@@ -398,6 +535,10 @@ export const TEMPLATE_DASHBOARD_HTML = `
     </div>
 
     <script>
+        // --- Utils ---
+        const moneyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+        let auditChartInstance = null; // Global reference for destroying charts
+
         // --- State ---
         let isSidebarCollapsed = false;
 
@@ -536,16 +677,11 @@ export const TEMPLATE_DASHBOARD_HTML = `
             }
             
             // 3. Reset active states
-            // Remove active style from all menu items
             document.querySelectorAll('.menu-item, .submenu a, .submenu-flyout a').forEach(el => {
                 el.classList.remove('active', 'bg-brand-yellow', 'text-gray-900', 'font-bold');
-                // Re-add default styling if needed, but Tailwind classes usually handle hover.
-                // For simplicity, we just remove the 'active' class we added.
                 if (el.classList.contains('menu-item')) {
-                    // Reset top-level items
-                    // (Handled by CSS .menu-item:not(.active):hover)
+                    // ...
                 } else {
-                    // Reset submenu items
                     el.classList.remove('text-brand-yellow');
                     el.classList.add('text-gray-500'); 
                 }
@@ -556,7 +692,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 if (element.classList.contains('menu-item')) {
                     element.classList.add('active');
                 } else {
-                    // Submenu item
                     element.classList.remove('text-gray-500');
                     element.classList.add('text-brand-yellow', 'font-bold');
                 }
@@ -565,6 +700,11 @@ export const TEMPLATE_DASHBOARD_HTML = `
             // 5. Close sidebar on mobile
             if (window.innerWidth < 768) {
                 toggleSidebarMobile();
+            }
+
+            // 6. Section Specific Loads
+            if (sectionId === 'audit') {
+                carregarHistoricoAuditorias();
             }
         }
 
@@ -602,7 +742,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
                     const projeto = await response.json();
                     closeProjectModal();
                     await carregarProjetos();
-                    // Select the new project
                     const select = document.getElementById('select-projeto');
                     if(select) select.value = projeto.id;
                     alert('Projeto criado com sucesso!');
@@ -645,7 +784,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
             }
         }
 
-        // --- Upload Logic ---
+        // --- Upload Logic (Central de Arquivos) ---
 
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
@@ -724,6 +863,223 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 if (uploadFeedback) uploadFeedback.classList.add('hidden');
                 if (dropZone) dropZone.classList.remove('opacity-50', 'pointer-events-none');
             }
+        }
+
+        // --- Audit Logic (Novo Módulo) ---
+        
+        const inputAuditFile = document.getElementById('input-audit-file');
+        
+        if (inputAuditFile) {
+            inputAuditFile.addEventListener('change', async (e) => {
+                if (e.target.files.length > 0) {
+                    await processNewAudit(e.target.files[0]);
+                }
+            });
+        }
+
+        async function triggerNewAudit() {
+             const selectProjeto = document.getElementById('select-projeto');
+             if (!selectProjeto || !selectProjeto.value) {
+                 alert('Selecione um projeto na "Central de Arquivos" ou no topo da página antes de continuar.');
+                 // Opcional: open project selector or focus it
+                 // Para simplificar, assume-se que o select existente é a fonte de verdade
+                 return;
+             }
+             document.getElementById('input-audit-file').click();
+        }
+
+        async function processNewAudit(file) {
+            const selectProjeto = document.getElementById('select-projeto');
+            const projectId = selectProjeto.value;
+
+            // UI Loading
+            document.getElementById('audit-loading').classList.remove('hidden');
+            document.getElementById('view-audit-history').classList.add('hidden');
+            document.getElementById('view-audit-report').classList.add('hidden');
+
+            const formData = new FormData();
+            formData.append('projectId', projectId);
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/api/app/audit', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.erro || 'Falha na auditoria');
+                }
+
+                // Renderiza direto o relatório recém criado
+                renderizarRelatorio(projectId, data);
+
+            } catch (error) {
+                console.error(error);
+                alert('Erro na auditoria: ' + error.message);
+                // Voltar ao estado inicial
+                voltarParaHistorico();
+            } finally {
+                 document.getElementById('audit-loading').classList.add('hidden');
+            }
+        }
+
+        async function carregarHistoricoAuditorias() {
+            const selectProjeto = document.getElementById('select-projeto');
+            // Se não tiver select no contexto global, ou não selecionado
+            if (!selectProjeto || !selectProjeto.value) {
+                document.getElementById('audit-empty-state').classList.remove('hidden');
+                document.getElementById('audit-history-container').classList.add('hidden');
+                return;
+            }
+
+            const projectId = selectProjeto.value;
+            
+            try {
+                const response = await fetch('/api/app/audit/history/' + projectId);
+                if (!response.ok) throw new Error('Falha ao buscar histórico');
+                
+                const historico = await response.json();
+                const tbody = document.getElementById('audit-history-list');
+                tbody.innerHTML = '';
+
+                if (historico.length === 0) {
+                    document.getElementById('audit-empty-state').classList.remove('hidden');
+                    document.getElementById('audit-history-container').classList.add('hidden');
+                } else {
+                    document.getElementById('audit-empty-state').classList.add('hidden');
+                    document.getElementById('audit-history-container').classList.remove('hidden');
+                    
+                    historico.sort((a,b) => new Date(b.data) - new Date(a.data)).forEach(item => {
+                        const tr = document.createElement('tr');
+                        const dataFmt = new Date(item.data).toLocaleString('pt-BR');
+                        // Extração simplista do nome original se possível, ou usa o nome do arquivo json
+                        const nomeExibicao = item.nomeArquivo.replace('_relatorio.json', '');
+
+                        tr.innerHTML = \`
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\${dataFmt}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">\${nomeExibicao}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button onclick="verRelatorio('\${projectId}', '\${item.nomeArquivo}')" class="text-brand-yellow hover:text-yellow-600 font-bold">Ver Relatório</button>
+                            </td>
+                        \`;
+                        tbody.appendChild(tr);
+                    });
+                }
+
+            } catch (error) {
+                console.error(error);
+                // Silencioso ou alert?
+            }
+        }
+
+        async function verRelatorio(projectId, filename) {
+            try {
+                // UI Loading (opcional)
+                const response = await fetch('/api/app/audit/report/' + projectId + '/' + filename);
+                if (!response.ok) throw new Error('Erro ao baixar relatório');
+                
+                const data = await response.json();
+                renderizarRelatorio(projectId, data, filename);
+                
+            } catch (e) {
+                console.error(e);
+                alert('Não foi possível carregar o relatório.');
+            }
+        }
+
+        function renderizarRelatorio(projectId, data, filename) {
+            // 1. Toggle Views
+            document.getElementById('view-audit-history').classList.add('hidden');
+            document.getElementById('view-audit-report').classList.remove('hidden');
+            document.getElementById('btn-voltar-audit').classList.remove('hidden');
+
+            // 2. Preencher Cards
+            document.getElementById('card-credit-value').textContent = moneyFormatter.format(data.resumo.totalCreditoIcmsPotencial);
+            document.getElementById('card-risk-value').textContent = moneyFormatter.format(data.resumo.estimativaMulta);
+            document.getElementById('card-missing-xml-count').textContent = data.resumo.totalSobrasSped;
+
+            // 3. Gráfico (Chart.js)
+            const ctx = document.getElementById('auditChart').getContext('2d');
+            
+            if (auditChartInstance) {
+                auditChartInstance.destroy();
+            }
+
+            auditChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Sobras XML (+)', 'Sobras SPED (-)', 'Total Divergente'],
+                    datasets: [{
+                        label: 'Quantidade de Documentos',
+                        data: [
+                            data.resumo.totalSobrasXml,
+                            data.resumo.totalSobrasSped,
+                            data.divergencias.length
+                        ],
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.6)', // Green
+                            'rgba(234, 179, 8, 0.6)', // Yellow
+                            'rgba(239, 68, 68, 0.6)'  // Red
+                        ],
+                        borderColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(234, 179, 8)',
+                            'rgb(239, 68, 68)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 4. Link Download
+            const btnDownload = document.getElementById('btn-download-json');
+            // Se veio do upload (sem filename ainda salvo no historico, mas salvo no backend), 
+            // construimos o nome ou usamos o ID.
+            // Para simplificar: se não tiver filename, usamos o ID data.
+            const fName = filename || \`\${data.dataAuditoria}_relatorio.json\`;
+            btnDownload.href = \`/api/app/audit/report/\${projectId}/\${fName}\`;
+
+            // 5. Preview Table (Limit 10)
+            const tbody = document.getElementById('audit-divergences-list');
+            tbody.innerHTML = '';
+            
+            data.divergencias.slice(0, 10).forEach(div => {
+                const tr = document.createElement('tr');
+                let valor = div.valorIcms ? moneyFormatter.format(div.valorIcms) : '-';
+                
+                // Badge de Tipo
+                let badgeClass = 'bg-gray-100 text-gray-800';
+                if (div.tipo === 'SOBRA_XML') badgeClass = 'bg-green-100 text-green-800';
+                if (div.tipo === 'SOBRA_SPED') badgeClass = 'bg-yellow-100 text-yellow-800';
+
+                tr.innerHTML = \`
+                    <td class="px-4 py-2 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full \${badgeClass}">\${div.tipo}</span></td>
+                    <td class="px-4 py-2 text-gray-500">\${div.descricao || 'Divergência identificada'}</td>
+                    <td class="px-4 py-2 text-right font-medium">\${valor}</td>
+                \`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function voltarParaHistorico() {
+            document.getElementById('view-audit-history').classList.remove('hidden');
+            document.getElementById('view-audit-report').classList.add('hidden');
+            document.getElementById('btn-voltar-audit').classList.add('hidden');
+            
+            // Recarrega pra garantir
+            carregarHistoricoAuditorias();
         }
 
         async function logout() {
