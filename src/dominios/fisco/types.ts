@@ -13,8 +13,6 @@ export interface ItemDivergencia {
     dataEmissao?: Date;
     valorTotal?: number;
     valorIcms?: number; // Para cálculo de crédito
-    cfop?: string;
-    afetaEstoque: boolean; // Baseado no CFOP (exemplos: 1.101, 2.101)
     descricao: string;
 }
 
@@ -22,14 +20,14 @@ export interface ResumoImpacto {
     totalSobrasXml: number;
     totalSobrasSped: number;
     totalCreditoIcmsPotencial: number; // Soma do ICMS das Sobras XML
-    valorTotalOperacoes: number; // Base para cálculo de multa
+    valorTotalOperacoes: number;
     estimativaMulta: number; // Ex: 1% do valor das operações irregulares
 }
 
-export interface RelatorioAuditoria {
-    idAuditoria: string; // UUID
+export interface RelatorioConferencia {
+    idConferencia: string; // UUID
     idProjeto: string;
-    dataAuditoria: string; // ISO Date
+    dataConferencia: string; // ISO Date
     arquivoSped: string; // Nome do arquivo TXT
     usuarioResponsavel: string; // Email do usuário
     divergencias: ItemDivergencia[];
@@ -45,7 +43,6 @@ export interface NotaFiscalShort {
     dtEmi: Date;
     vlTotal: number;
     vlIcms: number;
-    cfop?: string;
     origem: 'SPED' | 'R2';
     validado: boolean; // Usado durante o cruzamento
 }

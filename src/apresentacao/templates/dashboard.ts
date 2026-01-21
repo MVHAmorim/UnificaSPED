@@ -139,12 +139,15 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 <!-- Submenu (Accordion Mode) -->
                 <div id="submenu-coleta" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
                     <a href="#" onclick="showSection('xmls', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Central de Arquivos</a>
+                    <!-- Mudança: Conferência movida para Coleta ou mantida solta? Pedido diz: Coleta > Conferência -->
+                    <a href="#" onclick="showSection('conferencia', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Conferência (Movimentação)</a>
                 </div>
 
                 <!-- Submenu (Flyout Mode) -->
                 <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
                     <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Coleta</div>
                     <a href="#" onclick="showSection('xmls', this); return false;" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Central de Arquivos</a>
+                    <a href="#" onclick="showSection('conferencia', this); return false;" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Conferência</a>
                 </div>
             </div>
 
@@ -170,7 +173,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 </div>
             </div>
 
-            <!-- 4. AUDITORIA (Accordion/Flyout) -->
+            <!-- 4. AUDITORIA (Accordion/Flyout) - MANTIDO MAS COM CONFERENCIA REMOVIDA -->
             <div class="menu-group relative group">
                 <div onclick="toggleSubmenu('submenu-auditoria')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Auditoria">
                     <div class="flex items-center">
@@ -181,13 +184,12 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 </div>
                 
                 <div id="submenu-auditoria" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
-                    <a href="#" onclick="showSection('audit', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Cruzamento XML/SPED</a>
+                   <!-- <a href="#" onclick="showSection('audit', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Cruzamento XML/SPED</a> (REMOVIDO) -->
                     <a href="#" onclick="showSection('stock', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Auditoria de Estoque</a>
                 </div>
 
                 <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
                     <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Auditoria</div>
-                    <a href="#" onclick="showSection('audit', this); return false;" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Cruzamento XML/SPED</a>
                     <a href="#" onclick="showSection('stock', this); return false;" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Auditoria de Estoque</a>
                 </div>
             </div>
@@ -339,30 +341,30 @@ export const TEMPLATE_DASHBOARD_HTML = `
             <p class="text-gray-600">Configuração de regras tributárias e exceções.</p>
         </div>
 
-        <!-- Section: Cruzamento XML x SPED -->
-        <div id="section-audit" class="content-section hidden space-y-6">
+        <!-- Section: Conferência de Movimentação (Refatorado) -->
+        <div id="section-conferencia" class="content-section hidden space-y-6">
             <!-- Header Fixo -->
             <div class="flex justify-between items-center no-print">
-                <h1 class="text-2xl font-bold text-gray-900">Cruzamento XML x SPED</h1>
+                <h1 class="text-2xl font-bold text-gray-900">Conferência de Movimentação</h1>
                 <div class="flex space-x-2">
-                    <button onclick="voltarParaHistorico()" id="btn-voltar-audit" class="hidden px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    <button onclick="voltarParaHistorico()" id="btn-voltar-conferencia" class="hidden px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
                         <i class="fas fa-arrow-left mr-2"></i> Voltar
                     </button>
-                    <button onclick="triggerNewAudit()" class="bg-brand-yellow hover:bg-yellow-300 text-gray-900 font-bold py-2 px-4 rounded-lg shadow-sm">
-                        <i class="fas fa-plus mr-2"></i> Nova Auditoria
+                    <button onclick="triggerNewConferencia()" class="bg-brand-yellow hover:bg-yellow-300 text-gray-900 font-bold py-2 px-4 rounded-lg shadow-sm">
+                        <i class="fas fa-plus mr-2"></i> Nova Conferência
                     </button>
-                    <input type="file" id="input-audit-file" class="hidden" accept=".txt">
+                    <input type="file" id="input-conferencia-file" class="hidden" accept=".txt">
                 </div>
             </div>
 
             <!-- Feedback de Loading -->
-            <div id="audit-loading" class="hidden bg-blue-50 p-4 rounded-lg flex items-center justify-center text-blue-700">
-                <i class="fas fa-spinner fa-spin mr-3 text-xl"></i> Processando Auditoria... Isso pode levar alguns segundos.
+            <div id="conferencia-loading" class="hidden bg-blue-50 p-4 rounded-lg flex items-center justify-center text-blue-700">
+                <i class="fas fa-spinner fa-spin mr-3 text-xl"></i> Processando Conferência... Isso pode levar alguns segundos.
             </div>
 
             <!-- VIEW 1: Histórico -->
-            <div id="view-audit-history" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div id="audit-history-container" class="hidden">
+            <div id="view-conferencia-history" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div id="conferencia-history-container" class="hidden">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
@@ -371,19 +373,19 @@ export const TEMPLATE_DASHBOARD_HTML = `
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="audit-history-list" class="bg-white divide-y divide-gray-200">
+                        <tbody id="conferencia-history-list" class="bg-white divide-y divide-gray-200">
                             <!-- Preenchido via JS -->
                         </tbody>
                     </table>
                 </div>
-                <div id="audit-empty-state" class="p-12 text-center text-gray-500">
+                <div id="conferencia-empty-state" class="p-12 text-center text-gray-500">
                     <i class="fas fa-clipboard-list text-4xl mb-4 text-gray-300"></i>
-                    <p>Nenhuma auditoria realizada para este projeto ou projeto não selecionado.</p>
+                    <p>Nenhuma conferência realizada para este projeto ou projeto não selecionado.</p>
                 </div>
             </div>
 
             <!-- VIEW 2: Relatório (Sales Pitch) -->
-            <div id="view-audit-report" class="hidden space-y-6">
+            <div id="view-conferencia-report" class="hidden space-y-6">
                 
                 <!-- Cards de Impacto -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -392,29 +394,29 @@ export const TEMPLATE_DASHBOARD_HTML = `
                         <div class="absolute top-0 right-0 p-4 opacity-10">
                             <i class="fas fa-money-bill-wave text-6xl text-green-600"></i>
                         </div>
-                        <h3 class="text-green-800 font-medium mb-1">Potencial de Crédito Matches (ICMS)</h3>
+                        <h3 class="text-green-800 font-medium mb-1">Potencial de Crédito (ICMS)</h3>
                         <p id="card-credit-value" class="text-3xl font-bold text-green-600">R$ 0,00</p>
                         <p class="text-sm text-green-700 mt-2">Valores em XMLs não escriturados</p>
                     </div>
 
-                    <!-- Card Vermelho: Risco -->
+                    <!-- Card Amarelo: Sobra XML (XMLs que existem mas não estão no SPED - Em Quantidade) -->
+                    <div class="bg-gradient-to-br from-yellow-50 to-white p-6 rounded-xl shadow-sm border border-yellow-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <i class="fas fa-file-invoice text-6xl text-yellow-600"></i>
+                        </div>
+                        <h3 class="text-yellow-800 font-medium mb-1">XMLs Ausentes no SPED</h3>
+                        <p id="card-missing-xml-count" class="text-3xl font-bold text-yellow-600">0</p>
+                        <p id="label-missing-subtitle" class="text-sm text-yellow-700 mt-2">Arquivos XML sem escrituração</p>
+                    </div>
+
+                    <!-- Card Vermelho: Sobra SPED (Escriturado sem XML) -->
                     <div class="bg-gradient-to-br from-red-50 to-white p-6 rounded-xl shadow-sm border border-red-100 relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-10">
                             <i class="fas fa-exclamation-triangle text-6xl text-red-600"></i>
                         </div>
-                        <h3 class="text-red-800 font-medium mb-1">Risco Estimado (Multas)</h3>
-                        <p id="card-risk-value" class="text-3xl font-bold text-red-600">R$ 0,00</p>
-                        <p class="text-sm text-red-700 mt-2">Estimativa sobre divergências</p>
-                    </div>
-
-                    <!-- Card Amarelo: Operacional -->
-                    <div class="bg-gradient-to-br from-yellow-50 to-white p-6 rounded-xl shadow-sm border border-yellow-100 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-4 opacity-10">
-                            <i class="fas fa-file-invoice-dollar text-6xl text-yellow-600"></i>
-                        </div>
-                        <h3 class="text-yellow-800 font-medium mb-1">Notas Faltantes (XML)</h3>
-                        <p id="card-missing-xml-count" class="text-3xl font-bold text-yellow-600">0</p>
-                        <p class="text-sm text-yellow-700 mt-2">Escrituradas sem arquivo digital</p>
+                        <h3 class="text-red-800 font-medium mb-1">Escriturado sem XML</h3>
+                        <p id="card-risk-value" class="text-3xl font-bold text-red-600">0</p>
+                        <p id="label-risk-subtitle" class="text-sm text-red-700 mt-2">Itens no SPED sem arquivo digital</p>
                     </div>
                 </div>
 
@@ -424,7 +426,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <h3 class="font-bold text-gray-900 mb-4">Volume de Divergências</h3>
                         <div class="relative h-64">
-                             <canvas id="auditChart"></canvas>
+                             <canvas id="conferenciaChart"></canvas>
                         </div>
                     </div>
 
@@ -452,7 +454,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
                                     <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Valor ICMS</th>
                                 </tr>
                             </thead>
-                            <tbody id="audit-divergences-list" class="divide-y divide-gray-200 text-sm">
+                            <tbody id="conferencia-divergences-list" class="divide-y divide-gray-200 text-sm">
                                 <!-- Preenchido via JS -->
                             </tbody>
                         </table>
@@ -493,13 +495,10 @@ export const TEMPLATE_DASHBOARD_HTML = `
 
     </main>
 
-    <!-- Modal Novo Projeto (Outside Main Content, High Z-Index) -->
+    <!-- Modal Novo Projeto -->
     <div id="modal-novo-projeto" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Background overlay -->
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeProjectModal()"></div>
-
-            <!-- Modal panel -->
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -537,7 +536,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
     <script>
         // --- Utils ---
         const moneyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-        let auditChartInstance = null; // Global reference for destroying charts
+        let conferenciaChartInstance = null; 
 
         // --- State ---
         let isSidebarCollapsed = false;
@@ -571,54 +570,33 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 sidebar.classList.remove('w-72');
                 sidebar.classList.add('w-20');
                 sidebar.classList.add('collapsed'); 
-                
-                // Allow overflow so flyouts are visible
                 sidebarNav.classList.remove('overflow-y-auto');
                 sidebarNav.classList.add('overflow-visible');
-                
                 mainContent.classList.remove('md:ml-72');
                 mainContent.classList.add('md:ml-20');
-
-                // Hide Texts
                 logoText.classList.add('opacity-0', 'w-0');
                 logoText.classList.remove('ml-3');
-                
                 menuTexts.forEach(el => el.classList.add('opacity-0', 'w-0', 'hidden'));
                 menuArrows.forEach(el => el.classList.add('hidden')); 
-                
                 userInfo.classList.add('opacity-0', 'w-0', 'hidden');
                 logoutText.classList.add('opacity-0', 'w-0', 'hidden');
-
-                // Rotate Icon
                 toggleIcon.classList.add('rotate-180');
-                
-                // Close all open submenus
                 closeAllSubmenus();
-
             } else {
                 // Expand
                 sidebar.classList.remove('w-20');
                 sidebar.classList.add('w-72');
                 sidebar.classList.remove('collapsed');
-                
-                // Restore scroll
                 sidebarNav.classList.add('overflow-y-auto');
                 sidebarNav.classList.remove('overflow-visible');
-                
-                mainContent.classList.remove('md:ml-20');
+                mainContent.classList.remove('md:ml-72');
                 mainContent.classList.add('md:ml-72');
-
-                // Show Texts
                 logoText.classList.remove('opacity-0', 'w-0');
                 logoText.classList.add('ml-3');
-                
                 menuTexts.forEach(el => el.classList.remove('opacity-0', 'w-0', 'hidden'));
                 menuArrows.forEach(el => el.classList.remove('hidden'));
-                
                 userInfo.classList.remove('opacity-0', 'w-0', 'hidden');
                 logoutText.classList.remove('opacity-0', 'w-0', 'hidden');
-
-                // Rotate Icon Back
                 toggleIcon.classList.remove('rotate-180');
             }
         }
@@ -628,7 +606,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
         }
 
         function toggleSubmenu(submenuId) {
-            // Only work if sidebar is expanded
             if (isSidebarCollapsed) return;
 
             const submenu = document.getElementById(submenuId);
@@ -639,7 +616,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 submenu.classList.remove('open');
                 arrow.classList.remove('rotate-180');
             } else {
-                // Optional: Close others? For now, just toggle.
                 submenu.classList.add('open');
                 arrow.classList.add('rotate-180');
             }
@@ -652,7 +628,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
 
         function toggleSidebarMobile() {
             const overlay = document.getElementById('sidebar-overlay');
-            
             if (sidebar.classList.contains('-translate-x-full')) {
                 sidebar.classList.remove('-translate-x-full');
                 overlay.classList.remove('hidden');
@@ -662,13 +637,11 @@ export const TEMPLATE_DASHBOARD_HTML = `
             }
         }
 
-        // --- Navigation Logic (SPA) ---
+        // --- Navigation Logic ---
 
         function showSection(sectionId, element) {
-            // 1. Hide all sections
             document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
             
-            // 2. Show selected section
             const target = document.getElementById('section-' + sectionId);
             if (target) {
                 target.classList.remove('hidden');
@@ -676,7 +649,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 console.error('Section not found:', sectionId);
             }
             
-            // 3. Reset active states
             document.querySelectorAll('.menu-item, .submenu a, .submenu-flyout a').forEach(el => {
                 el.classList.remove('active', 'bg-brand-yellow', 'text-gray-900', 'font-bold');
                 if (el.classList.contains('menu-item')) {
@@ -687,7 +659,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 }
             });
             
-            // 4. Highlight current item
             if (element) {
                 if (element.classList.contains('menu-item')) {
                     element.classList.add('active');
@@ -697,18 +668,17 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 }
             }
             
-            // 5. Close sidebar on mobile
             if (window.innerWidth < 768) {
                 toggleSidebarMobile();
             }
 
-            // 6. Section Specific Loads
-            if (sectionId === 'audit') {
-                carregarHistoricoAuditorias();
+            // Section Specific Loads
+            if (sectionId === 'conferencia') {
+                carregarHistoricoConferencias();
             }
         }
 
-        // --- Project Management Logic ---
+        // --- Project Management ---
 
         function openProjectModal() {
             document.getElementById('modal-novo-projeto').classList.remove('hidden');
@@ -784,7 +754,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
             }
         }
 
-        // --- Upload Logic (Central de Arquivos) ---
+        // --- Upload Logic ---
 
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
@@ -865,44 +835,42 @@ export const TEMPLATE_DASHBOARD_HTML = `
             }
         }
 
-        // --- Audit Logic (Novo Módulo) ---
+        // --- Conferência Logic (Novo Módulo Refatorado) ---
         
-        const inputAuditFile = document.getElementById('input-audit-file');
+        const inputConferenciaFile = document.getElementById('input-conferencia-file');
         
-        if (inputAuditFile) {
-            inputAuditFile.addEventListener('change', async (e) => {
+        if (inputConferenciaFile) {
+            inputConferenciaFile.addEventListener('change', async (e) => {
                 if (e.target.files.length > 0) {
-                    await processNewAudit(e.target.files[0]);
+                    await processNewConferencia(e.target.files[0]);
                 }
             });
         }
 
-        async function triggerNewAudit() {
+        async function triggerNewConferencia() {
              const selectProjeto = document.getElementById('select-projeto');
              if (!selectProjeto || !selectProjeto.value) {
-                 alert('Selecione um projeto na "Central de Arquivos" ou no topo da página antes de continuar.');
-                 // Opcional: open project selector or focus it
-                 // Para simplificar, assume-se que o select existente é a fonte de verdade
+                 alert('Selecione um projeto na "Coleta" antes de continuar.');
                  return;
              }
-             document.getElementById('input-audit-file').click();
+             document.getElementById('input-conferencia-file').click();
         }
 
-        async function processNewAudit(file) {
+        async function processNewConferencia(file) {
             const selectProjeto = document.getElementById('select-projeto');
             const projectId = selectProjeto.value;
 
-            // UI Loading
-            document.getElementById('audit-loading').classList.remove('hidden');
-            document.getElementById('view-audit-history').classList.add('hidden');
-            document.getElementById('view-audit-report').classList.add('hidden');
+            document.getElementById('conferencia-loading').classList.remove('hidden');
+            document.getElementById('view-conferencia-history').classList.add('hidden');
+            document.getElementById('view-conferencia-report').classList.add('hidden');
 
             const formData = new FormData();
             formData.append('projectId', projectId);
             formData.append('file', file);
 
             try {
-                const response = await fetch('/api/app/audit', {
+                // Nova rota
+                const response = await fetch('/api/app/conferencia', {
                     method: 'POST',
                     body: formData
                 });
@@ -910,52 +878,48 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.erro || 'Falha na auditoria');
+                    throw new Error(data.erro || 'Falha na conferência');
                 }
 
-                // Renderiza direto o relatório recém criado
-                renderizarRelatorio(projectId, data);
+                renderizarRelatorioConferencia(projectId, data);
 
             } catch (error) {
                 console.error(error);
-                alert('Erro na auditoria: ' + error.message);
-                // Voltar ao estado inicial
+                alert('Erro na conferência: ' + error.message);
                 voltarParaHistorico();
             } finally {
-                 document.getElementById('audit-loading').classList.add('hidden');
+                 document.getElementById('conferencia-loading').classList.add('hidden');
             }
         }
 
-        async function carregarHistoricoAuditorias() {
+        async function carregarHistoricoConferencias() {
             const selectProjeto = document.getElementById('select-projeto');
-            // Se não tiver select no contexto global, ou não selecionado
             if (!selectProjeto || !selectProjeto.value) {
-                document.getElementById('audit-empty-state').classList.remove('hidden');
-                document.getElementById('audit-history-container').classList.add('hidden');
+                document.getElementById('conferencia-empty-state').classList.remove('hidden');
+                document.getElementById('conferencia-history-container').classList.add('hidden');
                 return;
             }
 
             const projectId = selectProjeto.value;
             
             try {
-                const response = await fetch('/api/app/audit/history/' + projectId);
+                const response = await fetch('/api/app/conferencia/history/' + projectId);
                 if (!response.ok) throw new Error('Falha ao buscar histórico');
                 
                 const historico = await response.json();
-                const tbody = document.getElementById('audit-history-list');
+                const tbody = document.getElementById('conferencia-history-list');
                 tbody.innerHTML = '';
 
                 if (historico.length === 0) {
-                    document.getElementById('audit-empty-state').classList.remove('hidden');
-                    document.getElementById('audit-history-container').classList.add('hidden');
+                    document.getElementById('conferencia-empty-state').classList.remove('hidden');
+                    document.getElementById('conferencia-history-container').classList.add('hidden');
                 } else {
-                    document.getElementById('audit-empty-state').classList.add('hidden');
-                    document.getElementById('audit-history-container').classList.remove('hidden');
+                    document.getElementById('conferencia-empty-state').classList.add('hidden');
+                    document.getElementById('conferencia-history-container').classList.remove('hidden');
                     
                     historico.sort((a,b) => new Date(b.data) - new Date(a.data)).forEach(item => {
                         const tr = document.createElement('tr');
                         const dataFmt = new Date(item.data).toLocaleString('pt-BR');
-                        // Extração simplista do nome original se possível, ou usa o nome do arquivo json
                         const nomeExibicao = item.nomeArquivo.replace('_relatorio.json', '');
 
                         tr.innerHTML = \`
@@ -971,18 +935,16 @@ export const TEMPLATE_DASHBOARD_HTML = `
 
             } catch (error) {
                 console.error(error);
-                // Silencioso ou alert?
             }
         }
 
         async function verRelatorio(projectId, filename) {
             try {
-                // UI Loading (opcional)
-                const response = await fetch('/api/app/audit/report/' + projectId + '/' + filename);
+                const response = await fetch('/api/app/conferencia/report/' + projectId + '/' + filename);
                 if (!response.ok) throw new Error('Erro ao baixar relatório');
                 
                 const data = await response.json();
-                renderizarRelatorio(projectId, data, filename);
+                renderizarRelatorioConferencia(projectId, data, filename);
                 
             } catch (e) {
                 console.error(e);
@@ -990,43 +952,44 @@ export const TEMPLATE_DASHBOARD_HTML = `
             }
         }
 
-        function renderizarRelatorio(projectId, data, filename) {
-            // 1. Toggle Views
-            document.getElementById('view-audit-history').classList.add('hidden');
-            document.getElementById('view-audit-report').classList.remove('hidden');
-            document.getElementById('btn-voltar-audit').classList.remove('hidden');
+        function renderizarRelatorioConferencia(projectId, data, filename) {
+            document.getElementById('view-conferencia-history').classList.add('hidden');
+            document.getElementById('view-conferencia-report').classList.remove('hidden');
+            document.getElementById('btn-voltar-conferencia').classList.remove('hidden');
 
-            // 2. Preencher Cards
+            // Card Verde: Potencial de Crédito (Soma ICMS das Sobras XML)
             document.getElementById('card-credit-value').textContent = moneyFormatter.format(data.resumo.totalCreditoIcmsPotencial);
-            document.getElementById('card-risk-value').textContent = moneyFormatter.format(data.resumo.estimativaMulta);
-            document.getElementById('card-missing-xml-count').textContent = data.resumo.totalSobrasSped;
-
-            // 3. Gráfico (Chart.js)
-            const ctx = document.getElementById('auditChart').getContext('2d');
             
-            if (auditChartInstance) {
-                auditChartInstance.destroy();
+            // Card Vermelho: Escriturado sem XML (Sobras SPED) - Apenas Contagem
+            document.getElementById('card-risk-value').textContent = data.resumo.totalSobrasSped;
+            document.getElementById('label-risk-subtitle').textContent = "Itens escriturados sem arquivo XML";
+
+            // Card Amarelo: XMLs Ausentes/Sobrando (Contagem)
+            document.getElementById('card-missing-xml-count').textContent = data.resumo.totalSobrasXml;
+            document.getElementById('label-missing-subtitle').textContent = "Arquivos XML sem escrituração";
+
+            const ctx = document.getElementById('conferenciaChart').getContext('2d');
+            
+            if (conferenciaChartInstance) {
+                conferenciaChartInstance.destroy();
             }
 
-            auditChartInstance = new Chart(ctx, {
+            conferenciaChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Sobras XML (+)', 'Sobras SPED (-)', 'Total Divergente'],
+                    labels: ['Sobras XML (Não Escriturados)', 'Sobras SPED (Sem XML)'],
                     datasets: [{
                         label: 'Quantidade de Documentos',
                         data: [
                             data.resumo.totalSobrasXml,
-                            data.resumo.totalSobrasSped,
-                            data.divergencias.length
+                            data.resumo.totalSobrasSped
                         ],
                         backgroundColor: [
-                            'rgba(34, 197, 94, 0.6)', // Green
-                            'rgba(234, 179, 8, 0.6)', // Yellow
-                            'rgba(239, 68, 68, 0.6)'  // Red
+                            'rgba(34, 197, 94, 0.6)', 
+                            'rgba(239, 68, 68, 0.6)'  
                         ],
                         borderColor: [
                             'rgb(34, 197, 94)',
-                            'rgb(234, 179, 8)',
                             'rgb(239, 68, 68)'
                         ],
                         borderWidth: 1
@@ -1043,62 +1006,54 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 }
             });
 
-            // 4. Link Download
             const btnDownload = document.getElementById('btn-download-json');
-            // Se veio do upload (sem filename ainda salvo no historico, mas salvo no backend), 
-            // construimos o nome ou usamos o ID.
-            // Para simplificar: se não tiver filename, usamos o ID data.
-            const fName = filename || \`\${data.dataAuditoria}_relatorio.json\`;
-            btnDownload.href = \`/api/app/audit/report/\${projectId}/\${fName}\`;
+            const fName = filename || \`\${data.dataConferencia}_relatorio.json\`;
+            btnDownload.href = \`/api/app/conferencia/report/\${projectId}/\${fName}\`;
 
-            // 5. Preview Table (Limit 10)
-            const tbody = document.getElementById('audit-divergences-list');
-            tbody.innerHTML = '';
-            
-            data.divergencias.slice(0, 10).forEach(div => {
-                const tr = document.createElement('tr');
-                let valor = div.valorIcms ? moneyFormatter.format(div.valorIcms) : '-';
-                
-                // Badge de Tipo
-                let badgeClass = 'bg-gray-100 text-gray-800';
-                if (div.tipo === 'SOBRA_XML') badgeClass = 'bg-green-100 text-green-800';
-                if (div.tipo === 'SOBRA_SPED') badgeClass = 'bg-yellow-100 text-yellow-800';
+const tbody = document.getElementById('conferencia-divergences-list');
+tbody.innerHTML = '';
 
-                tr.innerHTML = \`
+data.divergencias.slice(0, 10).forEach(div => {
+    const tr = document.createElement('tr');
+    let valor = div.valorIcms ? moneyFormatter.format(div.valorIcms) : '-';
+
+    let badgeClass = 'bg-gray-100 text-gray-800';
+    if (div.tipo === 'SOBRA_XML') badgeClass = 'bg-green-100 text-green-800';
+    if (div.tipo === 'SOBRA_SPED') badgeClass = 'bg-red-100 text-red-800';
+
+    tr.innerHTML = \`
                     <td class="px-4 py-2 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full \${badgeClass}">\${div.tipo}</span></td>
                     <td class="px-4 py-2 text-gray-500">\${div.descricao || 'Divergência identificada'}</td>
                     <td class="px-4 py-2 text-right font-medium">\${valor}</td>
                 \`;
-                tbody.appendChild(tr);
-            });
+    tbody.appendChild(tr);
+});
         }
 
-        function voltarParaHistorico() {
-            document.getElementById('view-audit-history').classList.remove('hidden');
-            document.getElementById('view-audit-report').classList.add('hidden');
-            document.getElementById('btn-voltar-audit').classList.add('hidden');
-            
-            // Recarrega pra garantir
-            carregarHistoricoAuditorias();
-        }
+function voltarParaHistorico() {
+    document.getElementById('view-conferencia-history').classList.remove('hidden');
+    document.getElementById('view-conferencia-report').classList.add('hidden');
+    document.getElementById('btn-voltar-conferencia').classList.add('hidden');
 
-        async function logout() {
-            try {
-                await fetch('/api/autenticacao/logout', { method: 'POST' });
-                window.location.href = '/';
-            } catch (error) {
-                console.error('Erro ao sair:', error);
-                alert('Erro ao tentar sair. Tente novamente.');
-            }
-        }
+    carregarHistoricoConferencias();
+}
 
-        // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', () => {
-            initSidebar();
-            carregarProjetos();
-        });
+async function logout() {
+    try {
+        await fetch('/api/autenticacao/logout', { method: 'POST' });
+        window.location.href = '/';
+    } catch (error) {
+        console.error('Erro ao sair:', error);
+        alert('Erro ao tentar sair. Tente novamente.');
+    }
+}
 
-    </script>
-</body>
-</html>
-`;
+document.addEventListener('DOMContentLoaded', () => {
+    initSidebar();
+    carregarProjetos();
+});
+
+</script>
+    </body>
+    </html>
+        `;
