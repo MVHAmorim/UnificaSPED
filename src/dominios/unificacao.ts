@@ -2,7 +2,10 @@ export interface SpedUnificationState {
     blocos0140: string[];
     somaM: Record<string, number>;
     somaP: Record<string, number>;
-    contadoresBloco9: Map<string, number>;
+    // Novos campos para validação
+    blocosComDados: Set<string>; // 'A', 'C', 'D'...
+    registrosCount: Map<string, number>; // 'C100' -> 10, '9900' -> ...
+    idsCadastros: Set<string>; // '0150|CNPJ', '0200|COD_ITEM' (Deduplicação)
     totalLinhas: number;
 }
 
@@ -10,15 +13,12 @@ export type SpedBlockChar = '0' | 'A' | 'C' | 'D' | 'F' | 'I' | 'M' | 'P' | '1' 
 
 export const BLOCO_ORDER: SpedBlockChar[] = ['A', 'C', 'D', 'F', 'I'];
 
-// Configuração de Agregação (Simplified for MVP)
-// Chave: Registro
-// IndicesChave: Posições no Pipe para formar a chave única de soma (ex: CST + Alíquota)
-// IndicesValor: Posições no Pipe para somar
+// Configuração de Agregação
 export const AGGREGATION_CONFIG: Record<string, { keyIndices: number[], valueIndices: number[] }> = {
     // PIS
-    'M200': { keyIndices: [], valueIndices: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11] }, // Consolidação PIS
-    'M210': { keyIndices: [2, 3, 4], valueIndices: [5, 6, 7, 8, 9] }, // Detalhamento
-    'M600': { keyIndices: [], valueIndices: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11] }, // Consolidação COFINS
+    'M200': { keyIndices: [], valueIndices: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+    'M210': { keyIndices: [2, 3, 4], valueIndices: [5, 6, 7, 8, 9] },
+    'M600': { keyIndices: [], valueIndices: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
     'M610': { keyIndices: [2, 3, 4], valueIndices: [5, 6, 7, 8, 9] },
 
     // CPRB
@@ -30,6 +30,8 @@ export const createInitialState = (): SpedUnificationState => ({
     blocos0140: [],
     somaM: {},
     somaP: {},
-    contadoresBloco9: new Map<string, number>(),
+    blocosComDados: new Set<string>(),
+    registrosCount: new Map<string, number>(),
+    idsCadastros: new Set<string>(),
     totalLinhas: 0
 });

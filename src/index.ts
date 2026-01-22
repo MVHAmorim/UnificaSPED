@@ -32,7 +32,7 @@ app.get("/seed", async (c) => {
     const email = c.req.query("email") || "teste@spedito.com.br";
     const usuarioTeste = {
         nome: "Usuário Teste",
-        vencimento: "2025-12-31",
+        vencimento: "2026-12-31",
         features: ["all"]
     };
     await c.env.UsuariosSpedito.put(email, JSON.stringify(usuarioTeste));
