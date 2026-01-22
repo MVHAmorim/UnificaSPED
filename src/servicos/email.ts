@@ -20,7 +20,7 @@ export async function enviarLinkMagico(paraEmail: string, linkMagico: string, co
         service: "ses",
     });
 
-    const assunto = "Seu Link de Acesso - Spedito";
+    const assunto = "Seu Link de Acesso - Unifica SPED";
     const corpoHtml = `
         <html>
         <body style="font-family: sans-serif; color: #1F2937; background-color: #F3F4F6; padding: 20px;">
@@ -29,7 +29,7 @@ export async function enviarLinkMagico(paraEmail: string, linkMagico: string, co
                     <div style="display: inline-block; width: 50px; height: 50px; background-color: #FACC15; border-radius: 50%; line-height: 50px; font-size: 24px; color: white; font-weight: bold;">
                         SP
                     </div>
-                    <h2 style="margin-top: 10px; color: #111827;">Bem-vindo ao Spedito</h2>
+                    <h2 style="margin-top: 10px; color: #111827;">Bem-vindo ao Unifica SPED</h2>
                 </div>
                 
                 <p style="font-size: 16px; line-height: 1.5;">Olá,</p>

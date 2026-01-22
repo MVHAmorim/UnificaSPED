@@ -42,6 +42,10 @@ export class UnificacaoController {
                 return c.json({ erro: 'É necessário enviar ao menos 2 arquivos para unificação.' }, 400);
             }
 
+            if (validFiles.length > 2) {
+                return c.json({ erro: 'Seu plano permite unificar apenas Matriz + 1 Filial por vez. Faça o upgrade para processar múltiplas filiais.' }, 403);
+            }
+
             // 1. Upload para R2 (Temp)
             const bucket = c.env.ARQUIVOS_USUARIOS;
             const sessionId = crypto.randomUUID();

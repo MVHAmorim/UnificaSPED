@@ -4,7 +4,7 @@ export const TEMPLATE_LOGIN_HTML = `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SPEDito</title>
+    <title>Login - Unifica SPED</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -38,7 +38,7 @@ export const TEMPLATE_LOGIN_HTML = `
                     </svg>
                 </div>
                 <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">
-                    SPEDito
+                    Unifica SPED
                 </h2>
                 <p class="mt-2 text-sm text-gray-500">
                     Acesse sua conta para continuar
@@ -94,7 +94,7 @@ export const TEMPLATE_LOGIN_HTML = `
             </div>
             <h2 class="text-2xl font-bold text-gray-900">Bem-vindo!</h2>
             <p class="mt-2 text-gray-600" id="email-usuario"></p>
-            <p class="mt-4 text-sm text-gray-500">Você está logado no SPEDito.</p>
+            <p class="mt-4 text-sm text-gray-500">Você está logado no Unifica SPED.</p>
             <button onclick="sair()" class="mt-8 text-sm text-red-600 hover:text-red-800 underline">Sair</button>
         </div>
     </div>

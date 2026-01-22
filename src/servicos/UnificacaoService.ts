@@ -46,8 +46,7 @@ export class UnificacaoService {
         }
 
         if (matrizIndex === -1) {
-            console.warn('[UnificaSPED] Nenhuma matriz explícita (0001) encontrada. Usando o primeiro arquivo como referência.');
-            return 0;
+            throw new Error("Arquivo da Matriz (Final do CNPJ 0001) não encontrado. Verifique os arquivos.");
         }
 
         return matrizIndex;
