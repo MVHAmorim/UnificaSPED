@@ -4,7 +4,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - SPED Unifier</title>
+    <title>Dashboard - UnificaSPED</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,55 +31,12 @@ export const TEMPLATE_DASHBOARD_HTML = `
         .menu-item:not(.active):hover {
             background-color: #F9FAFB;
         }
-        /* Hide scrollbar for clean look */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
         .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-        
-        /* Submenu Transitions */
-        .submenu {
-            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-        }
-        .submenu.open {
-            max-height: 500px; /* Arbitrary large height */
-            opacity: 1;
-        }
-
-        /* Sidebar Collapsed Hover Logic */
-        /* CRITICAL: Force display block on hover only when sidebar has 'collapsed' class */
-        #sidebar.collapsed .menu-group:hover .submenu-flyout {
-            display: block !important;
-            animation: fadeIn 0.2s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @media print {
-            #sidebar, header, #sidebar-toggle-btn, .no-print {
-                display: none !important;
-            }
-            #main-content {
-                margin-left: 0 !important;
-                padding: 0 !important;
-            }
-            .content-section {
-                display: block !important; /* Força exibir o relatório mesmo se escondido via JS */
-            }
-            body > :not(#main-content) {
-                display: none;
-            }
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
@@ -89,9 +46,9 @@ export const TEMPLATE_DASHBOARD_HTML = `
     <div class="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center fixed w-full z-30 top-0">
         <div class="flex items-center space-x-2">
             <div class="h-8 w-8 bg-brand-yellow rounded-full flex items-center justify-center">
-                <i class="fas fa-bolt text-white text-sm"></i>
+                <i class="fas fa-layer-group text-white text-sm"></i>
             </div>
-            <span class="font-bold text-lg text-gray-900">SPED Unifier</span>
+            <span class="font-bold text-lg text-gray-900">UnificaSPED</span>
         </div>
         <button onclick="toggleSidebarMobile()" class="text-gray-600 hover:text-gray-900 focus:outline-none">
             <i class="fas fa-bars text-xl"></i>
@@ -104,27 +61,16 @@ export const TEMPLATE_DASHBOARD_HTML = `
         <!-- Desktop Header (Logo) -->
         <div class="h-16 flex items-center px-6 border-b border-gray-100 hidden md:flex overflow-hidden whitespace-nowrap shrink-0">
             <div class="h-10 w-10 min-w-[2.5rem] bg-brand-yellow rounded-full flex items-center justify-center shadow-sm z-10">
-                <i class="fas fa-bolt text-white text-lg"></i>
+                <i class="fas fa-layer-group text-white text-lg"></i>
             </div>
-            <span id="logo-text" class="font-extrabold text-2xl text-gray-900 tracking-tight ml-3 transition-all duration-300 opacity-100">SPED Unifier</span>
+            <span id="logo-text" class="font-extrabold text-2xl text-gray-900 tracking-tight ml-3 transition-all duration-300 opacity-100">UnificaSPED</span>
         </div>
-
-        <!-- Toggle Button (Desktop) -->
-        <button onclick="toggleSidebarDesktop()" class="hidden md:flex absolute -right-3 top-20 bg-white border border-gray-200 rounded-full h-6 w-6 items-center justify-center text-gray-500 hover:text-brand-yellow hover:border-brand-yellow shadow-sm focus:outline-none z-50 transition-transform duration-300" id="sidebar-toggle-btn">
-            <i class="fas fa-chevron-left text-xs transition-transform duration-300" id="sidebar-toggle-icon"></i>
-        </button>
 
         <!-- Menu -->
         <nav id="sidebar-nav" class="flex-1 p-4 space-y-2 overflow-y-auto no-scrollbar">
             
-            <!-- 1. Visão Geral (Link Direto) -->
-            <a href="#" onclick="showSection('overview', this); return false;" class="menu-item active flex items-center px-4 py-3 rounded-lg transition-all duration-200 group overflow-hidden whitespace-nowrap" title="Visão Geral">
-                <i class="fas fa-chart-pie w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
-                <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Visão Geral</span>
-            </a>
-
-            <!-- 2. Unificação (Novo Item) -->
-            <a href="#" onclick="showSection('unificacao', this); return false;" class="menu-item flex items-center px-4 py-3 rounded-lg transition-all duration-200 group overflow-hidden whitespace-nowrap" title="Unificação">
+            <!-- Unificação (Item Único e Ativo) -->
+            <a href="#" onclick="showSection('unificacao', this); return false;" class="menu-item active flex items-center px-4 py-3 rounded-lg transition-all duration-200 group overflow-hidden whitespace-nowrap" title="Unificação">
                 <i class="fas fa-object-group w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
                 <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Unificação</span>
             </a>
@@ -155,169 +101,48 @@ export const TEMPLATE_DASHBOARD_HTML = `
     <!-- Main Content -->
     <main id="main-content" class="flex-1 p-4 md:p-8 pt-20 md:pt-8 min-h-screen transition-all duration-300 ease-in-out md:ml-72">
         
-        <!-- Section: Visão Geral -->
-        <div id="section-overview" class="content-section space-y-6">
-            <header class="flex justify-between items-center mb-6">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Visão Geral</h1>
-                    <p class="text-gray-500">Bem-vindo de volta, {{NOME}}.</p>
-                </div>
-                <button onclick="openProjectModal()" class="bg-brand-yellow hover:bg-yellow-300 text-gray-900 font-bold py-2 px-4 rounded-lg shadow-sm transition-colors">
-                    <i class="fas fa-plus mr-2"></i> Novo Projeto
-                </button>
+        <!-- Section: Unificação (Default) -->
+        <div id="section-unificacao" class="content-section space-y-6">
+            <header class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900">UnificaSPED - Central de Unificação Fiscal</h1>
+                <p class="text-gray-500">Unifique arquivos da Matriz e Filiais em um único arquivo consolidado.</p>
             </header>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-gray-500 text-sm font-medium">Projetos Ativos</h3>
-                        <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded-full">Atualizado</span>
-                    </div>
-                    <p class="text-3xl font-bold text-gray-900">0</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-gray-500 text-sm font-medium">Arquivos Unificados</h3>
-                        <i class="fas fa-file-alt text-gray-400"></i>
-                    </div>
-                    <p class="text-3xl font-bold text-gray-900">0</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-gray-500 text-sm font-medium">Economia de Tempo</h3>
-                        <i class="fas fa-chart-line text-green-500"></i>
-                    </div>
-                    <p class="text-3xl font-bold text-gray-900">0h</p>
-                </div>
+            <div id="drop-zone" class="bg-white p-12 rounded-xl shadow-sm border border-gray-100 text-center border-dashed border-2 border-gray-300 transition-colors duration-200 cursor-pointer">
+                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                <p class="text-gray-600 font-medium">Arraste seus arquivos (Matriz + Filiais) aqui</p>
+                <p class="text-xs text-gray-400 mt-2">Mínimo de 2 arquivos (.txt)</p>
+                <button id="btn-select-files" class="mt-6 bg-brand-yellow hover:bg-yellow-400 text-gray-900 font-bold py-2 px-6 rounded-lg transition-colors shadow-sm">
+                    Selecionar Arquivos
+                </button>
+                <input type="file" id="file-input" multiple class="hidden" accept=".txt">
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-4">Atividade Recente</h3>
-                <div class="space-y-4">
-                   <p class="text-gray-500 text-sm">Nenhuma atividade recente encontrada.</p>
-                </div>
+            <!-- Upload Feedback -->
+            <div id="upload-feedback" class="hidden mt-6">
+                 <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-center animate-pulse">
+                    <i class="fas fa-spinner fa-spin text-blue-500 mr-3 text-xl"></i>
+                    <span class="text-blue-700 font-medium">Unificando arquivos... Aguarde.</span>
+                 </div>
             </div>
-        </div>
 
-        <!-- Section: Unificação (Novo) -->
-        <div id="section-unificacao" class="content-section hidden space-y-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">Unificação de Arquivos</h1>
-            <p class="text-gray-600">Selecione os arquivos SPED para iniciar o processo de unificação.</p>
         </div>
 
     </main>
 
-    <!-- Modal Novo Projeto -->
-    <div id="modal-novo-projeto" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeProjectModal()"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
-                            <i class="fas fa-folder-plus text-yellow-600"></i>
-                        </div>
-                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Novo Projeto</h3>
-                            <div class="mt-2 space-y-4">
-                                <div>
-                                    <label for="projeto-nome" class="block text-sm font-medium text-gray-700">Nome do Cliente/Projeto</label>
-                                    <input type="text" name="projeto-nome" id="projeto-nome" class="mt-1 focus:ring-brand-yellow focus:border-brand-yellow block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2" placeholder="Ex: Indústria ABC Ltda">
-                                </div>
-                                <div>
-                                    <label for="projeto-cnpj" class="block text-sm font-medium text-gray-700">CNPJ</label>
-                                    <input type="text" name="projeto-cnpj" id="projeto-cnpj" class="mt-1 focus:ring-brand-yellow focus:border-brand-yellow block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2" placeholder="00.000.000/0000-00">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" onclick="criarProjeto()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-brand-yellow text-base font-medium text-gray-900 hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-yellow sm:ml-3 sm:w-auto sm:text-sm">
-                        Criar Projeto
-                    </button>
-                    <button type="button" onclick="closeProjectModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // --- Utils ---
-        const moneyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-
         // --- State ---
         let isSidebarCollapsed = false;
 
         // --- Elements ---
         const sidebar = document.getElementById('sidebar');
-        const sidebarNav = document.getElementById('sidebar-nav');
         const mainContent = document.getElementById('main-content');
-        const logoText = document.getElementById('logo-text');
-        const menuTexts = document.querySelectorAll('.menu-text');
-        const userInfo = document.getElementById('user-info');
-        const logoutText = document.getElementById('logout-text');
-        const toggleIcon = document.getElementById('sidebar-toggle-icon');
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const btnSelectFiles = document.getElementById('btn-select-files');
+        const uploadFeedback = document.getElementById('upload-feedback');
 
         // --- Sidebar Logic ---
-
-        function initSidebar() {
-            const savedState = localStorage.getItem('sidebarCollapsed');
-            if (savedState === 'true') {
-                setSidebarState(true);
-            }
-        }
-
-        function setSidebarState(collapsed) {
-            isSidebarCollapsed = collapsed;
-            localStorage.setItem('sidebarCollapsed', collapsed);
-
-            if (collapsed) {
-                // Collapse
-                sidebar.classList.remove('w-72');
-                sidebar.classList.add('w-20');
-                sidebar.classList.add('collapsed'); 
-                sidebarNav.classList.remove('overflow-y-auto');
-                sidebarNav.classList.add('overflow-visible');
-                mainContent.classList.remove('md:ml-72');
-                mainContent.classList.add('md:ml-20');
-                logoText.classList.add('opacity-0', 'w-0');
-                logoText.classList.remove('ml-3');
-                menuTexts.forEach(el => el.classList.add('opacity-0', 'w-0', 'hidden'));
-                userInfo.classList.add('opacity-0', 'w-0', 'hidden');
-                logoutText.classList.add('opacity-0', 'w-0', 'hidden');
-                toggleIcon.classList.add('rotate-180');
-                closeAllSubmenus();
-            } else {
-                // Expand
-                sidebar.classList.remove('w-20');
-                sidebar.classList.add('w-72');
-                sidebar.classList.remove('collapsed');
-                sidebarNav.classList.add('overflow-y-auto');
-                sidebarNav.classList.remove('overflow-visible');
-                mainContent.classList.remove('md:ml-72');
-                mainContent.classList.add('md:ml-72');
-                logoText.classList.remove('opacity-0', 'w-0');
-                logoText.classList.add('ml-3');
-                menuTexts.forEach(el => el.classList.remove('opacity-0', 'w-0', 'hidden'));
-                userInfo.classList.remove('opacity-0', 'w-0', 'hidden');
-                logoutText.classList.remove('opacity-0', 'w-0', 'hidden');
-                toggleIcon.classList.remove('rotate-180');
-            }
-        }
-
-        function toggleSidebarDesktop() {
-            setSidebarState(!isSidebarCollapsed);
-        }
-
-        function closeAllSubmenus() {
-            document.querySelectorAll('.submenu').forEach(el => el.classList.remove('open'));
-            // document.querySelectorAll('.menu-arrow').forEach(el => el.classList.remove('rotate-180'));
-        }
-
         function toggleSidebarMobile() {
             const overlay = document.getElementById('sidebar-overlay');
             if (sidebar.classList.contains('-translate-x-full')) {
@@ -328,87 +153,102 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 overlay.classList.add('hidden');
             }
         }
-
-        // --- Navigation Logic ---
-
+        
         function showSection(sectionId, element) {
-            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
-            
-            const target = document.getElementById('section-' + sectionId);
-            if (target) {
-                target.classList.remove('hidden');
-            } else {
-                console.error('Section not found:', sectionId);
-            }
-            
-            document.querySelectorAll('.menu-item').forEach(el => {
-                el.classList.remove('active', 'bg-brand-yellow', 'text-gray-900', 'font-bold');
+            // Apenas para manter a compatibilidade se voltarmos o menu
+            // Hoje só existe unificacao
+        }
+
+        // --- Upload Logic ---
+
+        if (btnSelectFiles && fileInput) {
+            btnSelectFiles.addEventListener('click', (e) => {
+                e.stopPropagation(); // Evitar double trigger se estiver dentro do dropzone
+                fileInput.click();
             });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFiles(e.target.files);
+                }
+            });
+        }
+
+        if (dropZone) {
+            dropZone.addEventListener('click', () => fileInput.click()); // Clique no box abre select
             
-            if (element) {
-                element.classList.add('active');
-            }
-            
-            if (window.innerWidth < 768) {
-                toggleSidebarMobile();
-            }
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('border-brand-yellow', 'bg-yellow-50');
+            });
+
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-brand-yellow', 'bg-yellow-50');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-brand-yellow', 'bg-yellow-50');
+                if (e.dataTransfer.files.length > 0) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
         }
 
-        // --- Project Management ---
-
-        function openProjectModal() {
-            document.getElementById('modal-novo-projeto').classList.remove('hidden');
-            const input = document.getElementById('projeto-nome');
-            if(input) input.focus();
-        }
-
-        function closeProjectModal() {
-            document.getElementById('modal-novo-projeto').classList.add('hidden');
-            document.getElementById('projeto-nome').value = '';
-            document.getElementById('projeto-cnpj').value = '';
-        }
-
-        async function criarProjeto() {
-            const nome = document.getElementById('projeto-nome').value;
-            const cnpj = document.getElementById('projeto-cnpj').value;
-
-            if (!nome || !cnpj) {
-                alert('Por favor, preencha todos os campos.');
+        async function handleFiles(files) {
+            if (files.length < 2) {
+                alert('Selecione pelo menos 2 arquivos (Matriz e Filial).');
                 return;
             }
 
+            if (uploadFeedback) uploadFeedback.classList.remove('hidden');
+            if (dropZone) dropZone.classList.add('opacity-50', 'pointer-events-none');
+
+            const formData = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files[]', files[i]);
+            }
+
             try {
-                const response = await fetch('/api/app/projetos', {
+                const response = await fetch('/app/unificacao', { // Rota do App ou API? app.ts define /unificacao POST?
+                    // app.ts: app.post("/unificacao", ...) dentro do grupo /app?
+                    // Se app.route("/app", appRoutes), entao POST /app/unificacao
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome, cnpj })
+                    body: formData
                 });
 
                 if (response.ok) {
-                    const projeto = await response.json();
-                    closeProjectModal();
-                    await carregarProjetos();
-                    alert('Projeto criado com sucesso!');
+                    // É um download de arquivo (stream)
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    // Tentar pegar nome do arquivo do header?
+                    const disposition = response.headers.get('Content-Disposition');
+                    let filename = 'Unificado.txt';
+                    if (disposition && disposition.indexOf('filename=') !== -1) {
+                        const match = disposition.match(/filename="?([^"]+)"?/);
+                         if (match && match[1]) filename = match[1];
+                    }
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    a.remove();
+                    
+                    alert('Unificação concluída com sucesso!');
+                    if(fileInput) fileInput.value = '';
                 } else {
-                    const err = await response.json();
-                    alert('Erro ao criar projeto: ' + (err.erro || 'Erro desconhecido'));
+                    const result = await response.json().catch(() => ({ erro: 'Erro desconhecido' }));
+                    alert('Erro: ' + (result.erro || response.statusText));
                 }
             } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro de conexão ao criar projeto.');
-            }
-        }
-
-        async function carregarProjetos() {
-            try {
-                const response = await fetch('/api/app/projetos');
-                if (response.ok) {
-                    const projetos = await response.json();
-                    // Just simple load for now, might be used in potential selects later
-                    console.log('Projetos carregados:', projetos.length);
-                }
-            } catch (error) {
-                console.error('Erro ao carregar projetos:', error);
+                console.error('Erro no upload:', error);
+                alert('Erro de conexão ao enviar arquivos.');
+            } finally {
+                if (uploadFeedback) uploadFeedback.classList.add('hidden');
+                if (dropZone) dropZone.classList.remove('opacity-50', 'pointer-events-none');
             }
         }
 
@@ -421,11 +261,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 alert('Erro ao tentar sair. Tente novamente.');
             }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initSidebar();
-            carregarProjetos();
-        });
 
     </script>
 </body>

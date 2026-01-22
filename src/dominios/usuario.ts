@@ -2,6 +2,7 @@ export interface DadosUsuario {
     nome: string;
     vencimento: string; // YYYY-MM-DD
     features: string[];
+    consumo?: Record<string, number>; // YYYY-MM -> qtde
 }
 
 export interface RespostaAutenticacao {
