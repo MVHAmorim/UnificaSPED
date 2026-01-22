@@ -5,7 +5,6 @@ import authRoutes from "./routes/auth";
 import appRoutes from "./routes/app";
 import projetosRoutes from "./routes/projetos";
 import uploadRoutes from "./routes/upload";
-import conferenciaRoutes from "./routes/conferencia";
 import { AuthController } from "./controllers/AuthController";
 
 const app = new Hono<{ Bindings: Ambiente, Variables: Variaveis }>();
@@ -27,7 +26,6 @@ app.route("/api/autenticacao", authRoutes);
 app.route("/app", appRoutes);
 app.route("/api/app/projetos", projetosRoutes);
 app.route("/api/app/upload", uploadRoutes);
-app.route("/api/app/conferencia", conferenciaRoutes);
 
 // Rota Seed (Dev)
 app.get("/seed", async (c) => {

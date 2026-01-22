@@ -4,7 +4,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - SPEDito</title>
+    <title>Dashboard - SPED Unifier</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -75,11 +75,9 @@ export const TEMPLATE_DASHBOARD_HTML = `
             .content-section {
                 display: block !important; /* Força exibir o relatório mesmo se escondido via JS */
             }
-            /* Esconder outras seções que não sejam a de auditoria se estiver nela */
             body > :not(#main-content) {
                 display: none;
             }
-            /* Garantir que cores de fundo sejam impressas */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
@@ -93,7 +91,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
             <div class="h-8 w-8 bg-brand-yellow rounded-full flex items-center justify-center">
                 <i class="fas fa-bolt text-white text-sm"></i>
             </div>
-            <span class="font-bold text-lg text-gray-900">SPEDito</span>
+            <span class="font-bold text-lg text-gray-900">SPED Unifier</span>
         </div>
         <button onclick="toggleSidebarMobile()" class="text-gray-600 hover:text-gray-900 focus:outline-none">
             <i class="fas fa-bars text-xl"></i>
@@ -108,7 +106,7 @@ export const TEMPLATE_DASHBOARD_HTML = `
             <div class="h-10 w-10 min-w-[2.5rem] bg-brand-yellow rounded-full flex items-center justify-center shadow-sm z-10">
                 <i class="fas fa-bolt text-white text-lg"></i>
             </div>
-            <span id="logo-text" class="font-extrabold text-2xl text-gray-900 tracking-tight ml-3 transition-all duration-300 opacity-100">SPEDito</span>
+            <span id="logo-text" class="font-extrabold text-2xl text-gray-900 tracking-tight ml-3 transition-all duration-300 opacity-100">SPED Unifier</span>
         </div>
 
         <!-- Toggle Button (Desktop) -->
@@ -125,94 +123,11 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Visão Geral</span>
             </a>
 
-            <!-- 2. COLETA (Accordion/Flyout) -->
-            <div class="menu-group relative group">
-                <!-- Parent Item -->
-                <div onclick="toggleSubmenu('submenu-coleta')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Coleta">
-                    <div class="flex items-center">
-                        <i class="fas fa-cloud-upload-alt w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
-                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Coleta</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
-                </div>
-                
-                <!-- Submenu (Accordion Mode) -->
-                <div id="submenu-coleta" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
-                    <a href="#" onclick="showSection('xmls', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Central de Arquivos</a>
-                    <!-- Mudança: Conferência movida para Coleta ou mantida solta? Pedido diz: Coleta > Conferência -->
-                    <a href="#" onclick="showSection('conferencia', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Conferência (Movimentação)</a>
-                </div>
-
-                <!-- Submenu (Flyout Mode) -->
-                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
-                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Coleta</div>
-                    <a href="#" onclick="showSection('xmls', this); return false;" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Central de Arquivos</a>
-                    <a href="#" onclick="showSection('conferencia', this); return false;" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Conferência</a>
-                </div>
-            </div>
-
-            <!-- 3. INTELIGÊNCIA (Accordion/Flyout) -->
-            <div class="menu-group relative group">
-                <div onclick="toggleSubmenu('submenu-inteligencia')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Inteligência">
-                    <div class="flex items-center">
-                        <i class="fas fa-brain w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
-                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Inteligência</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
-                </div>
-                
-                <div id="submenu-inteligencia" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
-                    <a href="#" onclick="showSection('correlation', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Correlações</a>
-                    <a href="#" onclick="showSection('tax-map', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Mapa Tributário</a>
-                </div>
-
-                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
-                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Inteligência</div>
-                    <a href="#" onclick="showSection('correlation', this); return false;" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Correlações</a>
-                    <a href="#" onclick="showSection('tax-map', this); return false;" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Mapa Tributário</a>
-                </div>
-            </div>
-
-            <!-- 4. AUDITORIA (Accordion/Flyout) - MANTIDO MAS COM CONFERENCIA REMOVIDA -->
-            <div class="menu-group relative group">
-                <div onclick="toggleSubmenu('submenu-auditoria')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Auditoria">
-                    <div class="flex items-center">
-                        <i class="fas fa-clipboard-check w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
-                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Auditoria</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
-                </div>
-                
-                <div id="submenu-auditoria" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
-                   <!-- <a href="#" onclick="showSection('audit', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Cruzamento XML/SPED</a> (REMOVIDO) -->
-                    <a href="#" onclick="showSection('stock', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Auditoria de Estoque</a>
-                </div>
-
-                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
-                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Auditoria</div>
-                    <a href="#" onclick="showSection('stock', this); return false;" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Auditoria de Estoque</a>
-                </div>
-            </div>
-
-            <!-- 5. ESTRATÉGIA (Accordion/Flyout) -->
-            <div class="menu-group relative group">
-                <div onclick="toggleSubmenu('submenu-estrategia')" class="menu-parent cursor-pointer flex items-center px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all duration-200 group overflow-hidden whitespace-nowrap justify-between" title="Estratégia">
-                    <div class="flex items-center">
-                        <i class="far fa-gem w-6 text-center min-w-[1.5rem] text-brand-yellow transition-all duration-300 group-hover:scale-110"></i>
-                        <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Estratégia</span>
-                    </div>
-                    <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300 menu-arrow"></i>
-                </div>
-                
-                <div id="submenu-estrategia" class="submenu bg-gray-50 rounded-lg mt-1 overflow-hidden">
-                    <a href="#" onclick="showSection('strategy', this); return false;" class="block px-4 py-2 pl-12 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">Riscos & Oportunidades</a>
-                </div>
-
-                <div class="submenu-flyout hidden absolute left-full top-0 w-56 bg-white shadow-xl rounded-r-lg border border-gray-100 z-50 py-2 pl-4">
-                    <div class="px-4 py-2 border-b border-gray-50 font-bold text-gray-900 bg-gray-50 rounded-tr-lg mb-2">Estratégia</div>
-                    <a href="#" onclick="showSection('strategy', this); return false;" class="block px-4 py-2 text-sm text-gray-600 hover:text-brand-yellow hover:bg-gray-50 rounded">Riscos & Oportunidades</a>
-                </div>
-            </div>
+            <!-- 2. Unificação (Novo Item) -->
+            <a href="#" onclick="showSection('unificacao', this); return false;" class="menu-item flex items-center px-4 py-3 rounded-lg transition-all duration-200 group overflow-hidden whitespace-nowrap" title="Unificação">
+                <i class="fas fa-object-group w-6 text-center min-w-[1.5rem] transition-all duration-300 group-hover:scale-110"></i>
+                <span class="menu-text ml-3 transition-opacity duration-300 opacity-100 font-medium">Unificação</span>
+            </a>
 
         </nav>
 
@@ -258,239 +173,36 @@ export const TEMPLATE_DASHBOARD_HTML = `
                         <h3 class="text-gray-500 text-sm font-medium">Projetos Ativos</h3>
                         <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded-full">Atualizado</span>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900">12</p>
+                    <p class="text-3xl font-bold text-gray-900">0</p>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-gray-500 text-sm font-medium">Arquivos Processados</h3>
+                        <h3 class="text-gray-500 text-sm font-medium">Arquivos Unificados</h3>
                         <i class="fas fa-file-alt text-gray-400"></i>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900">1,248</p>
+                    <p class="text-3xl font-bold text-gray-900">0</p>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-gray-500 text-sm font-medium">Economia Gerada</h3>
+                        <h3 class="text-gray-500 text-sm font-medium">Economia de Tempo</h3>
                         <i class="fas fa-chart-line text-green-500"></i>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900">R$ 45.2k</p>
+                    <p class="text-3xl font-bold text-gray-900">0h</p>
                 </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <h3 class="text-lg font-bold text-gray-900 mb-4">Atividade Recente</h3>
                 <div class="space-y-4">
-                    <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                        <div class="h-10 w-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-4">
-                            <i class="fas fa-upload"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">Upload de SPED Fiscal - Competência 10/2024</p>
-                            <p class="text-xs text-gray-500">Há 2 horas</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                        <div class="h-10 w-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-4">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">Correlação Automática Finalizada</p>
-                            <p class="text-xs text-gray-500">Há 5 horas</p>
-                        </div>
-                    </div>
+                   <p class="text-gray-500 text-sm">Nenhuma atividade recente encontrada.</p>
                 </div>
             </div>
         </div>
 
-        <!-- Section: Central de Arquivos -->
-        <div id="section-xmls" class="content-section hidden space-y-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">Central de Arquivos</h1>
-            
-            <!-- Project Selection -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
-                <label for="select-projeto" class="block text-sm font-medium text-gray-700 mb-2">Selecione o Projeto (Cliente)</label>
-                <select id="select-projeto" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-brand-yellow focus:border-brand-yellow sm:text-sm rounded-md border">
-                    <option value="">Selecione um projeto...</option>
-                </select>
-            </div>
-
-            <div id="drop-zone" class="bg-white p-12 rounded-xl shadow-sm border border-gray-100 text-center border-dashed border-2 border-gray-300 transition-colors duration-200">
-                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
-                <p class="text-gray-600">Arraste seus arquivos XML ou TXT aqui</p>
-                <button id="btn-select-files" class="mt-4 bg-white border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors">
-                    Selecionar Arquivos
-                </button>
-                <input type="file" id="file-input" multiple class="hidden" accept=".xml,.txt">
-            </div>
-
-            <!-- Upload Feedback -->
-            <div id="upload-feedback" class="hidden bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-center">
-                <i class="fas fa-spinner fa-spin text-blue-500 mr-3 text-xl"></i>
-                <span class="text-blue-700 font-medium">Enviando arquivos... Por favor, aguarde.</span>
-            </div>
-        </div>
-
-        <!-- Section: Correlação -->
-        <div id="section-correlation" class="content-section hidden space-y-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">Correlações & Fatores</h1>
-            <p class="text-gray-600">Módulo de correlação de itens e fatores de conversão.</p>
-        </div>
-
-        <!-- Section: Mapa Tributário -->
-        <div id="section-tax-map" class="content-section hidden space-y-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">Mapa Tributário</h1>
-            <p class="text-gray-600">Configuração de regras tributárias e exceções.</p>
-        </div>
-
-        <!-- Section: Conferência de Movimentação (Refatorado) -->
-        <div id="section-conferencia" class="content-section hidden space-y-6">
-            <!-- Header Fixo -->
-            <div class="flex justify-between items-center no-print">
-                <h1 class="text-2xl font-bold text-gray-900">Conferência de Movimentação</h1>
-                <div class="flex space-x-2">
-                    <button onclick="voltarParaHistorico()" id="btn-voltar-conferencia" class="hidden px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
-                        <i class="fas fa-arrow-left mr-2"></i> Voltar
-                    </button>
-                    <button onclick="triggerNewConferencia()" class="bg-brand-yellow hover:bg-yellow-300 text-gray-900 font-bold py-2 px-4 rounded-lg shadow-sm">
-                        <i class="fas fa-plus mr-2"></i> Nova Conferência
-                    </button>
-                    <input type="file" id="input-conferencia-file" class="hidden" accept=".txt">
-                </div>
-            </div>
-
-            <!-- Feedback de Loading -->
-            <div id="conferencia-loading" class="hidden bg-blue-50 p-4 rounded-lg flex items-center justify-center text-blue-700">
-                <i class="fas fa-spinner fa-spin mr-3 text-xl"></i> Processando Conferência... Isso pode levar alguns segundos.
-            </div>
-
-            <!-- VIEW 1: Histórico -->
-            <div id="view-conferencia-history" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div id="conferencia-history-container" class="hidden">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arquivo SPED</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="conferencia-history-list" class="bg-white divide-y divide-gray-200">
-                            <!-- Preenchido via JS -->
-                        </tbody>
-                    </table>
-                </div>
-                <div id="conferencia-empty-state" class="p-12 text-center text-gray-500">
-                    <i class="fas fa-clipboard-list text-4xl mb-4 text-gray-300"></i>
-                    <p>Nenhuma conferência realizada para este projeto ou projeto não selecionado.</p>
-                </div>
-            </div>
-
-            <!-- VIEW 2: Relatório (Sales Pitch) -->
-            <div id="view-conferencia-report" class="hidden space-y-6">
-                
-                <!-- Cards de Impacto -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Card Verde: Oportunidade -->
-                    <div class="bg-gradient-to-br from-green-50 to-white p-6 rounded-xl shadow-sm border border-green-100 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-4 opacity-10">
-                            <i class="fas fa-money-bill-wave text-6xl text-green-600"></i>
-                        </div>
-                        <h3 class="text-green-800 font-medium mb-1">Potencial de Crédito (ICMS)</h3>
-                        <p id="card-credit-value" class="text-3xl font-bold text-green-600">R$ 0,00</p>
-                        <p class="text-sm text-green-700 mt-2">Valores em XMLs não escriturados</p>
-                    </div>
-
-                    <!-- Card Amarelo: Sobra XML (XMLs que existem mas não estão no SPED - Em Quantidade) -->
-                    <div class="bg-gradient-to-br from-yellow-50 to-white p-6 rounded-xl shadow-sm border border-yellow-100 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-4 opacity-10">
-                            <i class="fas fa-file-invoice text-6xl text-yellow-600"></i>
-                        </div>
-                        <h3 class="text-yellow-800 font-medium mb-1">XMLs Ausentes no SPED</h3>
-                        <p id="card-missing-xml-count" class="text-3xl font-bold text-yellow-600">0</p>
-                        <p id="label-missing-subtitle" class="text-sm text-yellow-700 mt-2">Arquivos XML sem escrituração</p>
-                    </div>
-
-                    <!-- Card Vermelho: Sobra SPED (Escriturado sem XML) -->
-                    <div class="bg-gradient-to-br from-red-50 to-white p-6 rounded-xl shadow-sm border border-red-100 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-4 opacity-10">
-                            <i class="fas fa-exclamation-triangle text-6xl text-red-600"></i>
-                        </div>
-                        <h3 class="text-red-800 font-medium mb-1">Escriturado sem XML</h3>
-                        <p id="card-risk-value" class="text-3xl font-bold text-red-600">0</p>
-                        <p id="label-risk-subtitle" class="text-sm text-red-700 mt-2">Itens no SPED sem arquivo digital</p>
-                    </div>
-                </div>
-
-                <!-- Gráfico e Detalhes -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Gráfico -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h3 class="font-bold text-gray-900 mb-4">Volume de Divergências</h3>
-                        <div class="relative h-64">
-                             <canvas id="conferenciaChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Resumo/Download -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
-                        <div class="mb-6">
-                            <h3 class="font-bold text-gray-900 text-lg">Download do Relatório</h3>
-                            <p class="text-gray-500 max-w-xs mx-auto mt-2">Tenha acesso a lista detalhada de todas as chaves de acesso divergentes em formato JSON para integração.</p>
-                        </div>
-                        <a id="btn-download-json" href="#" target="_blank" class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center">
-                            <i class="fas fa-download mr-2"></i> Baixar JSON Completo
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Tabela de Divergências (Preview - Primeiros 10 itens) -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                    <h3 class="font-bold text-gray-900 mb-4">Amostra de Divergências (Top 10)</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Descrição</th>
-                                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Valor ICMS</th>
-                                </tr>
-                            </thead>
-                            <tbody id="conferencia-divergences-list" class="divide-y divide-gray-200 text-sm">
-                                <!-- Preenchido via JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section: Auditoria de Estoque -->
-        <div id="section-stock" class="content-section hidden space-y-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">Auditoria de Estoque</h1>
-            <p class="text-gray-600">Análise do Bloco K e Inventário.</p>
-        </div>
-
-        <!-- Section: Estratégia -->
-        <div id="section-strategy" class="content-section hidden space-y-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">Riscos & Oportunidades</h1>
-            <p class="text-gray-600">Dashboard estratégico de compliance e recuperação de créditos.</p>
-        </div>
-
-        <!-- Section: Configurações -->
-        <div id="section-settings" class="content-section hidden space-y-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">Configurações</h1>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-2xl">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Perfil</h3>
-                <div class="grid grid-cols-1 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Nome</label>
-                        <input type="text" value="{{NOME}}" disabled class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-50 px-3 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" value="{{EMAIL}}" disabled class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-50 px-3 py-2">
-                    </div>
-                </div>
-            </div>
+        <!-- Section: Unificação (Novo) -->
+        <div id="section-unificacao" class="content-section hidden space-y-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">Unificação de Arquivos</h1>
+            <p class="text-gray-600">Selecione os arquivos SPED para iniciar o processo de unificação.</p>
         </div>
 
     </main>
@@ -536,7 +248,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
     <script>
         // --- Utils ---
         const moneyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-        let conferenciaChartInstance = null; 
 
         // --- State ---
         let isSidebarCollapsed = false;
@@ -547,7 +258,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
         const mainContent = document.getElementById('main-content');
         const logoText = document.getElementById('logo-text');
         const menuTexts = document.querySelectorAll('.menu-text');
-        const menuArrows = document.querySelectorAll('.menu-arrow');
         const userInfo = document.getElementById('user-info');
         const logoutText = document.getElementById('logout-text');
         const toggleIcon = document.getElementById('sidebar-toggle-icon');
@@ -577,7 +287,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 logoText.classList.add('opacity-0', 'w-0');
                 logoText.classList.remove('ml-3');
                 menuTexts.forEach(el => el.classList.add('opacity-0', 'w-0', 'hidden'));
-                menuArrows.forEach(el => el.classList.add('hidden')); 
                 userInfo.classList.add('opacity-0', 'w-0', 'hidden');
                 logoutText.classList.add('opacity-0', 'w-0', 'hidden');
                 toggleIcon.classList.add('rotate-180');
@@ -594,7 +303,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 logoText.classList.remove('opacity-0', 'w-0');
                 logoText.classList.add('ml-3');
                 menuTexts.forEach(el => el.classList.remove('opacity-0', 'w-0', 'hidden'));
-                menuArrows.forEach(el => el.classList.remove('hidden'));
                 userInfo.classList.remove('opacity-0', 'w-0', 'hidden');
                 logoutText.classList.remove('opacity-0', 'w-0', 'hidden');
                 toggleIcon.classList.remove('rotate-180');
@@ -605,25 +313,9 @@ export const TEMPLATE_DASHBOARD_HTML = `
             setSidebarState(!isSidebarCollapsed);
         }
 
-        function toggleSubmenu(submenuId) {
-            if (isSidebarCollapsed) return;
-
-            const submenu = document.getElementById(submenuId);
-            const parent = submenu.previousElementSibling;
-            const arrow = parent.querySelector('.menu-arrow');
-
-            if (submenu.classList.contains('open')) {
-                submenu.classList.remove('open');
-                arrow.classList.remove('rotate-180');
-            } else {
-                submenu.classList.add('open');
-                arrow.classList.add('rotate-180');
-            }
-        }
-
         function closeAllSubmenus() {
             document.querySelectorAll('.submenu').forEach(el => el.classList.remove('open'));
-            document.querySelectorAll('.menu-arrow').forEach(el => el.classList.remove('rotate-180'));
+            // document.querySelectorAll('.menu-arrow').forEach(el => el.classList.remove('rotate-180'));
         }
 
         function toggleSidebarMobile() {
@@ -649,32 +341,16 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 console.error('Section not found:', sectionId);
             }
             
-            document.querySelectorAll('.menu-item, .submenu a, .submenu-flyout a').forEach(el => {
+            document.querySelectorAll('.menu-item').forEach(el => {
                 el.classList.remove('active', 'bg-brand-yellow', 'text-gray-900', 'font-bold');
-                if (el.classList.contains('menu-item')) {
-                    // ...
-                } else {
-                    el.classList.remove('text-brand-yellow');
-                    el.classList.add('text-gray-500'); 
-                }
             });
             
             if (element) {
-                if (element.classList.contains('menu-item')) {
-                    element.classList.add('active');
-                } else {
-                    element.classList.remove('text-gray-500');
-                    element.classList.add('text-brand-yellow', 'font-bold');
-                }
+                element.classList.add('active');
             }
             
             if (window.innerWidth < 768) {
                 toggleSidebarMobile();
-            }
-
-            // Section Specific Loads
-            if (sectionId === 'conferencia') {
-                carregarHistoricoConferencias();
             }
         }
 
@@ -712,8 +388,6 @@ export const TEMPLATE_DASHBOARD_HTML = `
                     const projeto = await response.json();
                     closeProjectModal();
                     await carregarProjetos();
-                    const select = document.getElementById('select-projeto');
-                    if(select) select.value = projeto.id;
                     alert('Projeto criado com sucesso!');
                 } else {
                     const err = await response.json();
@@ -730,330 +404,30 @@ export const TEMPLATE_DASHBOARD_HTML = `
                 const response = await fetch('/api/app/projetos');
                 if (response.ok) {
                     const projetos = await response.json();
-                    const select = document.getElementById('select-projeto');
-                    if (!select) return;
-
-                    const atual = select.value;
-                    select.innerHTML = '<option value="">Selecione um projeto...</option>';
-                    
-                    projetos.forEach(p => {
-                        const option = document.createElement('option');
-                        option.value = p.id;
-                        option.textContent = p.nome + ' (' + p.cnpj + ')';
-                        select.appendChild(option);
-                    });
-
-                    if (atual && projetos.find(p => p.id === atual)) {
-                        select.value = atual;
-                    } else if (projetos.length > 0) {
-                        select.value = projetos[projetos.length - 1].id;
-                    }
+                    // Just simple load for now, might be used in potential selects later
+                    console.log('Projetos carregados:', projetos.length);
                 }
             } catch (error) {
                 console.error('Erro ao carregar projetos:', error);
             }
         }
 
-        // --- Upload Logic ---
-
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const btnSelectFiles = document.getElementById('btn-select-files');
-        const uploadFeedback = document.getElementById('upload-feedback');
-
-        if (btnSelectFiles && fileInput) {
-            btnSelectFiles.addEventListener('click', () => {
-                fileInput.click();
-            });
-
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    handleFiles(e.target.files);
-                }
-            });
-        }
-
-        if (dropZone) {
-            dropZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropZone.classList.add('border-brand-yellow', 'bg-yellow-50');
-            });
-
-            dropZone.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('border-brand-yellow', 'bg-yellow-50');
-            });
-
-            dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('border-brand-yellow', 'bg-yellow-50');
-                if (e.dataTransfer.files.length > 0) {
-                    handleFiles(e.dataTransfer.files);
-                }
-            });
-        }
-
-        async function handleFiles(files) {
-            const selectProjeto = document.getElementById('select-projeto');
-            const projectId = selectProjeto ? selectProjeto.value : null;
-
-            if (!projectId) {
-                alert('Por favor, selecione um projeto antes de enviar arquivos.');
-                return;
-            }
-
-            if (uploadFeedback) uploadFeedback.classList.remove('hidden');
-            if (dropZone) dropZone.classList.add('opacity-50', 'pointer-events-none');
-
-            const formData = new FormData();
-            formData.append('projectId', projectId);
-            
-            for (let i = 0; i < files.length; i++) {
-                formData.append('files[]', files[i]);
-            }
-
+        async function logout() {
             try {
-                const response = await fetch('/api/app/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    alert('Sucesso: ' + result.mensagem);
-                    if(fileInput) fileInput.value = '';
-                } else {
-                    alert('Erro ao enviar: ' + (result.erro || 'Erro desconhecido'));
-                }
+                await fetch('/api/autenticacao/logout', { method: 'POST' });
+                window.location.href = '/';
             } catch (error) {
-                console.error('Erro no upload:', error);
-                alert('Erro de conexão ao enviar arquivos.');
-            } finally {
-                if (uploadFeedback) uploadFeedback.classList.add('hidden');
-                if (dropZone) dropZone.classList.remove('opacity-50', 'pointer-events-none');
+                console.error('Erro ao sair:', error);
+                alert('Erro ao tentar sair. Tente novamente.');
             }
         }
 
-        // --- Conferência Logic (Novo Módulo Refatorado) ---
-        
-        const inputConferenciaFile = document.getElementById('input-conferencia-file');
-        
-        if (inputConferenciaFile) {
-            inputConferenciaFile.addEventListener('change', async (e) => {
-                if (e.target.files.length > 0) {
-                    await processNewConferencia(e.target.files[0]);
-                }
-            });
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            initSidebar();
+            carregarProjetos();
+        });
 
-        async function triggerNewConferencia() {
-             const selectProjeto = document.getElementById('select-projeto');
-             if (!selectProjeto || !selectProjeto.value) {
-                 alert('Selecione um projeto na "Coleta" antes de continuar.');
-                 return;
-             }
-             document.getElementById('input-conferencia-file').click();
-        }
-
-        async function processNewConferencia(file) {
-            const selectProjeto = document.getElementById('select-projeto');
-            const projectId = selectProjeto.value;
-
-            document.getElementById('conferencia-loading').classList.remove('hidden');
-            document.getElementById('view-conferencia-history').classList.add('hidden');
-            document.getElementById('view-conferencia-report').classList.add('hidden');
-
-            const formData = new FormData();
-            formData.append('projectId', projectId);
-            formData.append('file', file);
-
-            try {
-                // Nova rota
-                const response = await fetch('/api/app/conferencia', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.erro || 'Falha na conferência');
-                }
-
-                renderizarRelatorioConferencia(projectId, data);
-
-            } catch (error) {
-                console.error(error);
-                alert('Erro na conferência: ' + error.message);
-                voltarParaHistorico();
-            } finally {
-                 document.getElementById('conferencia-loading').classList.add('hidden');
-            }
-        }
-
-        async function carregarHistoricoConferencias() {
-            const selectProjeto = document.getElementById('select-projeto');
-            if (!selectProjeto || !selectProjeto.value) {
-                document.getElementById('conferencia-empty-state').classList.remove('hidden');
-                document.getElementById('conferencia-history-container').classList.add('hidden');
-                return;
-            }
-
-            const projectId = selectProjeto.value;
-            
-            try {
-                const response = await fetch('/api/app/conferencia/history/' + projectId);
-                if (!response.ok) throw new Error('Falha ao buscar histórico');
-                
-                const historico = await response.json();
-                const tbody = document.getElementById('conferencia-history-list');
-                tbody.innerHTML = '';
-
-                if (historico.length === 0) {
-                    document.getElementById('conferencia-empty-state').classList.remove('hidden');
-                    document.getElementById('conferencia-history-container').classList.add('hidden');
-                } else {
-                    document.getElementById('conferencia-empty-state').classList.add('hidden');
-                    document.getElementById('conferencia-history-container').classList.remove('hidden');
-                    
-                    historico.sort((a,b) => new Date(b.data) - new Date(a.data)).forEach(item => {
-                        const tr = document.createElement('tr');
-                        const dataFmt = new Date(item.data).toLocaleString('pt-BR');
-                        const nomeExibicao = item.nomeArquivo.replace('_relatorio.json', '');
-
-                        tr.innerHTML = \`
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\${dataFmt}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">\${nomeExibicao}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button onclick="verRelatorio('\${projectId}', '\${item.nomeArquivo}')" class="text-brand-yellow hover:text-yellow-600 font-bold">Ver Relatório</button>
-                            </td>
-                        \`;
-                        tbody.appendChild(tr);
-                    });
-                }
-
-            } catch (error) {
-                console.error(error);
-            }
-        }
-
-        async function verRelatorio(projectId, filename) {
-            try {
-                const response = await fetch('/api/app/conferencia/report/' + projectId + '/' + filename);
-                if (!response.ok) throw new Error('Erro ao baixar relatório');
-                
-                const data = await response.json();
-                renderizarRelatorioConferencia(projectId, data, filename);
-                
-            } catch (e) {
-                console.error(e);
-                alert('Não foi possível carregar o relatório.');
-            }
-        }
-
-        function renderizarRelatorioConferencia(projectId, data, filename) {
-            document.getElementById('view-conferencia-history').classList.add('hidden');
-            document.getElementById('view-conferencia-report').classList.remove('hidden');
-            document.getElementById('btn-voltar-conferencia').classList.remove('hidden');
-
-            // Card Verde: Potencial de Crédito (Soma ICMS das Sobras XML)
-            document.getElementById('card-credit-value').textContent = moneyFormatter.format(data.resumo.totalCreditoIcmsPotencial);
-            
-            // Card Vermelho: Escriturado sem XML (Sobras SPED) - Apenas Contagem
-            document.getElementById('card-risk-value').textContent = data.resumo.totalSobrasSped;
-            document.getElementById('label-risk-subtitle').textContent = "Itens escriturados sem arquivo XML";
-
-            // Card Amarelo: XMLs Ausentes/Sobrando (Contagem)
-            document.getElementById('card-missing-xml-count').textContent = data.resumo.totalSobrasXml;
-            document.getElementById('label-missing-subtitle').textContent = "Arquivos XML sem escrituração";
-
-            const ctx = document.getElementById('conferenciaChart').getContext('2d');
-            
-            if (conferenciaChartInstance) {
-                conferenciaChartInstance.destroy();
-            }
-
-            conferenciaChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Sobras XML (Não Escriturados)', 'Sobras SPED (Sem XML)'],
-                    datasets: [{
-                        label: 'Quantidade de Documentos',
-                        data: [
-                            data.resumo.totalSobrasXml,
-                            data.resumo.totalSobrasSped
-                        ],
-                        backgroundColor: [
-                            'rgba(34, 197, 94, 0.6)', 
-                            'rgba(239, 68, 68, 0.6)'  
-                        ],
-                        borderColor: [
-                            'rgb(34, 197, 94)',
-                            'rgb(239, 68, 68)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-
-            const btnDownload = document.getElementById('btn-download-json');
-            const fName = filename || \`\${data.dataConferencia}_relatorio.json\`;
-            btnDownload.href = \`/api/app/conferencia/report/\${projectId}/\${fName}\`;
-
-const tbody = document.getElementById('conferencia-divergences-list');
-tbody.innerHTML = '';
-
-data.divergencias.slice(0, 10).forEach(div => {
-    const tr = document.createElement('tr');
-    let valor = div.valorIcms ? moneyFormatter.format(div.valorIcms) : '-';
-
-    let badgeClass = 'bg-gray-100 text-gray-800';
-    if (div.tipo === 'SOBRA_XML') badgeClass = 'bg-green-100 text-green-800';
-    if (div.tipo === 'SOBRA_SPED') badgeClass = 'bg-red-100 text-red-800';
-
-    tr.innerHTML = \`
-                    <td class="px-4 py-2 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full \${badgeClass}">\${div.tipo}</span></td>
-                    <td class="px-4 py-2 text-gray-500">\${div.descricao || 'Divergência identificada'}</td>
-                    <td class="px-4 py-2 text-right font-medium">\${valor}</td>
-                \`;
-    tbody.appendChild(tr);
-});
-        }
-
-function voltarParaHistorico() {
-    document.getElementById('view-conferencia-history').classList.remove('hidden');
-    document.getElementById('view-conferencia-report').classList.add('hidden');
-    document.getElementById('btn-voltar-conferencia').classList.add('hidden');
-
-    carregarHistoricoConferencias();
-}
-
-async function logout() {
-    try {
-        await fetch('/api/autenticacao/logout', { method: 'POST' });
-        window.location.href = '/';
-    } catch (error) {
-        console.error('Erro ao sair:', error);
-        alert('Erro ao tentar sair. Tente novamente.');
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    initSidebar();
-    carregarProjetos();
-});
-
-</script>
-    </body>
-    </html>
-        `;
+    </script>
+</body>
+</html>
+`;

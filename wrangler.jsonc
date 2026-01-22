@@ -1,6 +1,6 @@
 {
     "$schema": "node_modules/wrangler/config-schema.json",
-    "name": "app-spedito",
+    "name": "unifica-sped",
     "main": "src/index.ts",
     "compatibility_date": "2026-01-20",
     "kv_namespaces": [
