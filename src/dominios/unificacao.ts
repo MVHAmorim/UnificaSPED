@@ -8,7 +8,7 @@ export interface SpedUnificationState {
 
 export type SpedBlockChar = '0' | 'A' | 'C' | 'D' | 'F' | 'I' | 'M' | 'P' | '1' | '9';
 
-export const BLOCO_ORDER: SpedBlockChar[] = ['A', 'C', 'D', 'F', 'I', '1'];
+export const BLOCO_ORDER: SpedBlockChar[] = ['A', 'C', 'D', 'F', 'I'];
 
 // Configuração de Agregação (Simplified for MVP)
 // Chave: Registro

@@ -79,7 +79,10 @@ export class UnificacaoService {
                 // 3. Blocos Calculados (M e P)
                 await UnificacaoService.streamCalculatedBlocks(writer, encoder, state);
 
-                // 4. Bloco 9 (Gerado)
+                // 4. Bloco 1 (Deixado para o final antes do 9)
+                await UnificacaoService.streamBlocoGlobal(bucket, keys, '1', writer, encoder, state);
+
+                // 5. Bloco 9 (Gerado)
                 await UnificacaoService.streamBloco9(writer, encoder, state);
 
                 await writer.close();
@@ -182,7 +185,8 @@ export class UnificacaoService {
                 // Cuidado: A ordem dos campos na linha original era fixa. Aqui temos chave + valores.
                 // Teríamos que remontar a linha baseada no layout. 
                 // Para MVP, vamos apenas dump simples: |REG|CHAVE|...VALORES|
-                await writer.write(encoder.encode(`|${reg}|${restoChave}|${valoresFmt}|\r\n`));
+                const prefixo = restoChave ? `${reg}|${restoChave}` : `${reg}`;
+                await writer.write(encoder.encode(`|${prefixo}|${valoresFmt}|\r\n`));
             }
             await writer.write(encoder.encode('|M990|999|\r\n'));
         }
@@ -195,7 +199,8 @@ export class UnificacaoService {
                 const reg = parts[0];
                 const valoresFmt = values.map(v => v.toFixed(2).replace('.', ',')).join('|');
                 const restoChave = parts.slice(1).join('|');
-                await writer.write(encoder.encode(`|${reg}|${restoChave}|${valoresFmt}|\r\n`));
+                const prefixo = restoChave ? `${reg}|${restoChave}` : `${reg}`;
+                await writer.write(encoder.encode(`|${prefixo}|${valoresFmt}|\r\n`));
             }
             await writer.write(encoder.encode('|P990|999|\r\n'));
         }
