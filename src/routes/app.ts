@@ -1,3 +1,4 @@
+import { UnificacaoController } from "../controllers/UnificacaoController";
 import { Hono } from "hono";
 import { authMiddleware } from "../middleware/auth";
 import { AppController } from "../controllers/AppController";
@@ -10,6 +11,7 @@ app.use("*", authMiddleware);
 
 // Rotas
 app.get("/dashboard", AppController.dashboard);
+app.post("/unificacao", UnificacaoController.unificar);
 
 // Redirecionar raiz do app para dashboard
 app.get("/", (c) => c.redirect("/app/dashboard"));
