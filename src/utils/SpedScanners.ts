@@ -4,7 +4,7 @@ import { AGGREGATION_CONFIG, SpedUnificationState } from "../dominios/unificacao
 export class SpedPreScanner {
     static async scan(fileStream: ReadableStream, state: SpedUnificationState, isMatriz: boolean): Promise<void> {
         const reader = fileStream
-            .pipeThrough(new TextDecoderStream())
+            .pipeThrough(new TextDecoderStream('latin1'))
             .pipeThrough(new LineSplitter())
             .getReader();
 
@@ -24,9 +24,9 @@ export class SpedPreScanner {
             const reg = parts[1];
             if (!reg) continue;
 
-            // Detectar Blocos com Dados (exceto 0 e 9 e M/P/1 que sao tratados especiais)
+            // Detectar Blocos com Dados (exceto 0 e 9 e M/P que sao tratados especiais)
             const bloco = reg.charAt(0);
-            if (['A', 'C', 'D', 'F', 'I'].includes(bloco)) {
+            if (['A', 'C', 'D', 'F', 'I', 'P', '1'].includes(bloco)) {
                 // Ignorar abertura/fechamento
                 if (!reg.endsWith('001') && !reg.endsWith('990')) {
                     state.blocosComDados.add(bloco);
@@ -50,11 +50,11 @@ export class SpedPreScanner {
         }
     }
 
-    private static aggregate(line: string, parts: string[], config: { keyIndices: number[], valueIndices: number[] }, target: Record<string, number>) {
+    private static aggregate(line: string, parts: string[], config: { keyIndices: number[], valueIndices: number[] }, target: Record<string, number[]>) {
         const key = config.keyIndices.map(i => parts[i]).join('|');
         const compositeKey = `${parts[1]}|${key}`;
 
-        const storage = target as unknown as Record<string, number[]>;
+        const storage = target;
 
         if (!storage[compositeKey]) {
             storage[compositeKey] = new Array(config.valueIndices.length).fill(0);

@@ -64,7 +64,34 @@ export class UnificacaoController {
             await c.env.UsuariosSpedito.put(email, JSON.stringify(usuario));
 
             // 3. Executar Unificação
-            const stream = await UnificacaoService.unificar(bucket, storedKeys);
+            // FASE 1: Análise de Cenário
+            const mapContextos = await UnificacaoService.analisarCenario(bucket, storedKeys);
+
+            if (mapContextos.size === 0) {
+                return c.json({ erro: 'Não foi possível identificar arquivos SPED válidos (Header 0000 não encontrado).' }, 400);
+            }
+
+            if (mapContextos.size > 1) {
+                // Montar mensagem detalhada
+                let msg = 'Múltiplas competências ou empresas base detectadas: ';
+                for (const ctx of mapContextos.values()) {
+                    msg += `[${ctx.competencia} - ${ctx.cnpjBase}] `;
+                }
+                msg += '. O sistema atual suporta unificar apenas uma competência/empresa por vez.';
+                return c.json({ erro: msg }, 400);
+            }
+
+            const contexto = mapContextos.values().next().value;
+            if (!contexto) {
+                return c.json({ erro: 'Erro interno ao processar contexto de unificação.' }, 500);
+            }
+
+            if (!contexto.matriz) {
+                return c.json({ erro: `Matriz não identificada para a competência ${contexto.competencia}. Verifique se um dos arquivos possui final de CNPJ 0001.` }, 400);
+            }
+
+            // FASE 2: Execução
+            const stream = await UnificacaoService.unificar(bucket, contexto);
 
             // 4. Retornar Stream
             return c.body(stream, 200, {
