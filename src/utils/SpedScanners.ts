@@ -8,6 +8,9 @@ export class SpedPreScanner {
             .pipeThrough(new LineSplitter())
             .getReader();
 
+        let currentM400Key = '';
+        let currentM800Key = '';
+
         while (true) {
             const { done, value: line } = await reader.read();
             if (done) break;
@@ -44,28 +47,55 @@ export class SpedPreScanner {
             if (reg.startsWith('M') || reg.startsWith('P')) {
                 const config = AGGREGATION_CONFIG[reg];
                 if (config) {
-                    SpedPreScanner.aggregate(line, parts, config, reg.startsWith('M') ? state.somaM : state.somaP);
+                    const target = reg.startsWith('M') ? state.somaM : state.somaP;
+
+                    // Tratamento Hierárquico para M400/M410 e M800/M810
+                    if (reg === 'M400') {
+                        const key = SpedPreScanner.getKey(parts, config);
+                        currentM400Key = key;
+                        SpedPreScanner.aggregateWithKey(parts, config, `M400|${key}`, target);
+                    } else if (reg === 'M410') {
+                        const key = SpedPreScanner.getKey(parts, config);
+                        // Chave Composta: M410 | ParentKey | MyKey
+                        SpedPreScanner.aggregateWithKey(parts, config, `M410|${currentM400Key}|${key}`, target);
+                    } else if (reg === 'M800') {
+                        const key = SpedPreScanner.getKey(parts, config);
+                        currentM800Key = key;
+                        SpedPreScanner.aggregateWithKey(parts, config, `M800|${key}`, target);
+                    } else if (reg === 'M810') {
+                        const key = SpedPreScanner.getKey(parts, config);
+                        SpedPreScanner.aggregateWithKey(parts, config, `M810|${currentM800Key}|${key}`, target);
+                    } else {
+                        // Padrão
+                        const key = SpedPreScanner.getKey(parts, config);
+                        SpedPreScanner.aggregateWithKey(parts, config, `${reg}|${key}`, target);
+                    }
                 }
             }
         }
     }
 
-    private static aggregate(line: string, parts: string[], config: { keyIndices: number[], valueIndices: number[] }, target: Record<string, number[]>) {
-        const key = config.keyIndices.map(i => parts[i]).join('|');
-        const compositeKey = `${parts[1]}|${key}`;
+    private static getKey(parts: string[], config: { keyIndices: number[] }): string {
+        return config.keyIndices.map(i => parts[i]).join('|');
+    }
 
-        const storage = target;
-
-        if (!storage[compositeKey]) {
-            storage[compositeKey] = new Array(config.valueIndices.length).fill(0);
+    private static aggregateWithKey(parts: string[], config: { valueIndices: number[] }, compositeKey: string, target: Record<string, number[]>) {
+        if (!target[compositeKey]) {
+            target[compositeKey] = new Array(config.valueIndices.length).fill(0);
         }
 
-        const currentValues = storage[compositeKey];
+        const currentValues = target[compositeKey];
 
         config.valueIndices.forEach((idx, i) => {
             const rawVal = parts[idx]?.replace(',', '.') || '0';
             const val = parseFloat(rawVal) || 0;
             currentValues[i] += val;
         });
+    }
+
+    // Deprecated but kept for compatibility if needed (replaced by aggregateWithKey logic inline)
+    private static aggregate(line: string, parts: string[], config: { keyIndices: number[], valueIndices: number[] }, target: Record<string, number[]>) {
+        const key = SpedPreScanner.getKey(parts, config);
+        SpedPreScanner.aggregateWithKey(parts, config, `${parts[1]}|${key}`, target);
     }
 }
