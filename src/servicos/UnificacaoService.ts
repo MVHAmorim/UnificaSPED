@@ -193,6 +193,33 @@ export class UnificacaoService {
             } catch (err) {
                 console.error("Erro no stream de unificação:", err);
                 await writer.abort(err);
+            } finally {
+                // CLEANUP: Deletar arquivos originais do R2 para economizar espaço
+                const keysToDelete: string[] = [];
+
+                if (contexto.matriz) {
+                    contexto.matriz.arquivos.forEach(a => keysToDelete.push(a.key));
+                }
+
+                contexto.filiais.forEach(f => {
+                    f.arquivos.forEach(a => keysToDelete.push(a.key));
+                });
+
+                if (keysToDelete.length > 0) {
+                    try {
+                        // R2 suporta delete de multiplas keys?
+                        // A lib padrao de R2Bucket usually tem delete(key) ou delete([keys])?
+                        // Cloudflare Workers R2 API: delete(keys: string | string[])
+                        // Mas aws4fetch ou custom wrapper? O usuario passa `bucket: R2Bucket`.
+                        // Assumindo Type R2Bucket padrao do Cloudflare:
+                        // bucket.delete(key: string | string[])
+
+                        await bucket.delete(keysToDelete);
+                        console.log(`Cleanup: ${keysToDelete.length} arquivos removidos com sucesso.`);
+                    } catch (cleanupErr) {
+                        console.error("Erro no cleanup de arquivos R2:", cleanupErr);
+                    }
+                }
             }
         })();
 

@@ -2,6 +2,8 @@ export interface DadosUsuario {
     nome: string;
     vencimento: string; // YYYY-MM-DD
     features: string[];
+    plano?: 'FREE' | 'PRO';
+    cotaMensalUsada?: number;
     consumo?: Record<string, number>; // YYYY-MM -> qtde
 }
 

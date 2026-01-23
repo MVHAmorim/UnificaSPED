@@ -15,7 +15,7 @@ export class AuthController {
         const origem = new URL(c.req.url).origin;
 
         try {
-            const resultado = await realizarLogin(body.email, c.env.UsuariosSpedito, c.env.SessoesSpedito, origem, {
+            const resultado = await realizarLogin(body.email, c.env.UNIFICASPED_USUARIOS, c.env.UNIFICASPED_SESSOES, origem, {
                 regiao: c.env.AWS_REGION,
                 idChaveAcesso: c.env.AWS_ACCESS_KEY_ID,
                 chaveAcessoSecreta: c.env.AWS_SECRET_ACCESS_KEY,
@@ -35,7 +35,7 @@ export class AuthController {
             return c.json({ valido: false, erro: "Token obrigatório" }, 400);
         }
 
-        const resultado = await verificarToken(token, c.env.UsuariosSpedito, c.env.SessoesSpedito);
+        const resultado = await verificarToken(token, c.env.UNIFICASPED_USUARIOS, c.env.UNIFICASPED_SESSOES);
 
         if (resultado) {
             // Segurança: Definir Cookie HttpOnly

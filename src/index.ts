@@ -6,6 +6,7 @@ import appRoutes from "./routes/app";
 import projetosRoutes from "./routes/projetos";
 import uploadRoutes from "./routes/upload";
 import { AuthController } from "./controllers/AuthController";
+import { AsaasWebhookController } from "./controllers/AsaasWebhookController";
 
 const app = new Hono<{ Bindings: Ambiente, Variables: Variaveis }>();
 
@@ -22,6 +23,9 @@ app.onError((err, c) => {
 app.get("/", AuthController.page);
 app.route("/api/autenticacao", authRoutes);
 
+// Webhooks
+app.post("/webhooks/asaas", AsaasWebhookController.handleWebhook);
+
 // Rotas Protegidas (App)
 app.route("/app", appRoutes);
 app.route("/api/app/projetos", projetosRoutes);
@@ -35,7 +39,7 @@ app.get("/seed", async (c) => {
         vencimento: "2026-12-31",
         features: ["all"]
     };
-    await c.env.UsuariosSpedito.put(email, JSON.stringify(usuarioTeste));
+    await c.env.UNIFICASPED_USUARIOS.put(email, JSON.stringify(usuarioTeste));
     return c.text(`Usuário ${email} criado!`);
 });
 

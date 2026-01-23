@@ -5,16 +5,12 @@
     "compatibility_date": "2026-01-20",
     "kv_namespaces": [
         {
-            "binding": "UsuariosSpedito",
-            "id": "4c4daed91e8e4f6080571e620e684da8"
+            "binding": "UNIFICASPED_USUARIOS",
+            "id": "8e03f4873e1a4f9f84c78e8f11795d76"
         },
         {
-            "binding": "SessoesSpedito",
-            "id": "81c108dea2974286b8b9ac276cd0fce9"
-        },
-        {
-            "binding": "ProjetosSpedito",
-            "id": "de29c960cbe44df6bf8ebd17edd5f0e7"
+            "binding": "UNIFICASPED_SESSOES",
+            "id": "3c33e215f745462a8029615fd82de223"
         }
     ],
     "r2_buckets": [
@@ -25,6 +21,8 @@
     ],
     "vars": {
         "AWS_REGION": "us-east-1",
-        "SES_FROM_EMAIL": "no-reply@spedito.com.br"
+        "SES_FROM_EMAIL": "no-reply@spedito.com.br",
+        "ASAAS_WEBHOOK_TOKEN": "",
+        "ASAAS_URL": "https://www.asaas.com/api/v3"
     }
 }
